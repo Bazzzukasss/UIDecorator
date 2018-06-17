@@ -44,6 +44,7 @@ private:
 
     void initialize();
     void initializeDictionaries();
+    void initializeHighlighting();
 };
 
 #endif // UIDECORATOR_H

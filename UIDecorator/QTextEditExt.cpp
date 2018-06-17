@@ -28,7 +28,8 @@ void QTextEditExt::initialize()
     mCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     mCompleter->setWrapAround(false);
     connect(mCompleter,    SIGNAL(activated(QString)), this,   SLOT(insertCompletion(QString)));
-    //connect(this,&QTextEdit::textChanged,[&](){ formatText(); });
+
+    mHighlighter = new QSyntaxHighlighterExt(document());
 }
 
 void QTextEditExt::insertCompletion(const QString& completion)
@@ -41,7 +42,6 @@ void QTextEditExt::insertCompletion(const QString& completion)
     tc.removeSelectedText();
     tc.insertText(completion);
     setTextCursor(tc);
-    formatText();
 }
 
 QString QTextEditExt::textUnderCursor() const
@@ -49,72 +49,6 @@ QString QTextEditExt::textUnderCursor() const
     QTextCursor tc = textCursor();
     tc.select(QTextCursor::WordUnderCursor);
     return tc.selectedText();
-}
-QString QTextEditExt::formatLine(const QString &aLine)
-{
-    QString formatedLine;
-    QString word("");
-    for(int i = 0; i < aLine.length(); i++)
-    {
-        auto ch = aLine[i];
-
-        if(ch.isLetter() || ch == "-")
-            word += ch;
-        else
-        {
-            if(!word.isEmpty())
-            {
-                formatedLine += formatWord(word);
-                word.clear();
-            }
-
-            if((ch == " ")||(ch == "\t"))
-            {
-                formatedLine += "&nbsp;";
-                continue;
-            }
-            formatedLine += ch;
-        }
-    }
-    if(!word.isEmpty())
-        formatedLine += formatWord(word);
-
-    return formatedLine;
-}
-
-QString QTextEditExt::formatWord(const QString &aWord)
-{
-    Decoration decor = getWordDecoration(aWord);
-
-    QString color = decor.mColor.name();
-    QString face = decor.mFont.family();
-    QString word = decor.mFont.bold() ? QString("<b>%1</b>").arg(aWord) : aWord;
-
-    QString formatedWord = QString("<font color=\"%1\" face=\"%2\">%3</font>").arg(color).arg(face).arg(word);
-    return formatedWord;
-}
-void QTextEditExt::formatText()
-{
-    blockSignals(true);
-    QString formatedText("");
-    QStringList lineList = toPlainText().split("\n");
-    int lineNum(0);
-    QTextCursor tc = textCursor();
-    int tcPosition = tc.position();
-
-
-    for(const QString& line : lineList)
-    {
-        formatedText += formatLine(line);
-        if(++lineNum < lineList.size())
-            formatedText+="<br>";
-    }
-
-    setHtml(formatedText);
-
-    tc.setPosition(tcPosition);
-    setTextCursor(tc);
-    blockSignals(false);
 }
 
 bool QTextEditExt::isTextChanged() const
@@ -127,23 +61,10 @@ void QTextEditExt::setTextChangedState(bool aIsChanged)
     mIsTextChanged = aIsChanged;
 }
 
-QStringList QTextEditExt::getWordList(const QString &aLine)
-{
-    return aLine.split(" ");
-}
-
-Decoration QTextEditExt::getWordDecoration(const QString& word)
+bool QTextEditExt::isInDictionary(const QString &aWord)
 {
     for (const auto& dictionary : mDictionaries)
-        if(dictionary.mWords.contains(word))
-            return dictionary.mDecoration;
-    return Decoration() ;
-}
-
-bool QTextEditExt::isInDictionary(const QString &word)
-{
-    for (const auto& dictionary : mDictionaries)
-        if(dictionary.mWords.contains(word))
+        if(dictionary.mWords.contains(aWord))
             return true;
     return false;
 }
@@ -179,10 +100,8 @@ void QTextEditExt::keyPressEvent(QKeyEvent *e)
 
     const bool ctrlOrShift = e->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
     if (!mCompleter || (ctrlOrShift && e->text().isEmpty()))
-    {
-        formatText();
         return;
-    }
+
 
     static QString eow("~!@#%^&*()_+{}|:\"<>?,./;'[]\\="); // end of word
     bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
@@ -191,7 +110,6 @@ void QTextEditExt::keyPressEvent(QKeyEvent *e)
    if (!isShortcut && (hasModifier || e->text().isEmpty()|| completionPrefix.length() < 1 || eow.contains(e->text().right(1))) )
     {
         mCompleter->popup()->hide();
-        formatText();
         return;
     }
 
@@ -204,7 +122,6 @@ void QTextEditExt::keyPressEvent(QKeyEvent *e)
     QRect cr = cursorRect();
     cr.setWidth(mCompleter->popup()->sizeHintForColumn(0) + mCompleter->popup()->verticalScrollBar()->sizeHint().width());
     mCompleter->complete(cr); // popup it up!
-    formatText();
 }
 
 void QTextEditExt::resetCompleter()
@@ -245,7 +162,17 @@ void QTextEditExt::clearDictionary()
     mDictionaries.clear();
 }
 
-void QTextEditExt::addDictionary(const QString &aFilename, const Decoration &aDecoration, const QString &aIconFilename)
+void QTextEditExt::addHighlightRule(const QString &aFilename, const QTextCharFormat &aFormat)
+{
+    mHighlighter->addRule(aFilename,aFormat);
+}
+
+void QTextEditExt::clearHighlightRules()
+{
+    mHighlighter->clearRules();
+}
+
+void QTextEditExt::addDictionary(const QString &aFilename, const QString &aIconFilename)
 {
     QFile file(aFilename);
     if (file.open(QFile::ReadOnly))
@@ -265,7 +192,7 @@ void QTextEditExt::addDictionary(const QString &aFilename, const Decoration &aDe
         for(auto& str : wordsSet)
             wordsList << QString().fromStdString(str);
 
-        mDictionaries.push_back( {aDecoration,aIconFilename,wordsList} );
+        mDictionaries.push_back( {aIconFilename,wordsList} );
         resetModel();
         resetCompleter();
     }

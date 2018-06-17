@@ -2,27 +2,12 @@
 #define QTEXTEDITEXT_H
 
 #include <QTextEdit>
+#include <QSyntaxHighlighterExt.h>
 
 class QCompleter;
 class QStandardItemModel;
 
-struct Decoration{
-    Decoration(){
-        mFont.setBold(true);
-    }
-
-    Decoration(const QColor& aColor, const QFont& aFont)
-        : mColor(aColor)
-        , mFont(aFont)
-    {
-        mFont.setBold(true);
-    }
-    QColor mColor{QColor(Qt::darkGray)};
-    QFont mFont{QFont("MS Shell Dlg 2")};
-};
-
 struct Dictionary{
-    Decoration mDecoration;
     QString mIcon;
     QStringList mWords;
 };
@@ -35,9 +20,12 @@ public:
     QTextEditExt(QWidget *parent = 0);
     ~QTextEditExt();
 
-    void addDictionary(const QString& aFilename,const Decoration& aDecoration,const QString& aIconFilename = "");
+    void addDictionary(const QString& aFilename,const QString& aIconFilename = "");
     void clearDictionary();
-    void formatText();
+
+    void addHighlightRule(const QString& aFilename, const QTextCharFormat& aFormat);
+    void clearHighlightRules();
+
     bool isTextChanged() const;
     void setTextChangedState(bool aIsChanged);
 
@@ -49,22 +37,19 @@ private slots:
     void insertCompletion(const QString &completion);
 
 private:
-    QString textUnderCursor() const;
     QCompleter *mCompleter;
-    QVector<Dictionary> mDictionaries;
+    QSyntaxHighlighterExt* mHighlighter;
+
+    QVector<Dictionary> mDictionaries;    
+
     QStandardItemModel* mModel{nullptr};
     bool mIsTextChanged{false};
 
     void initialize();
     void resetModel();
     void resetCompleter();
-
-    QStringList getWordList(const QString& aLine);
-    Decoration getWordDecoration(const QString& word);
-    bool isInDictionary(const QString& word);
-
-    QString formatLine(const QString& aLine);
-    QString formatWord(const QString& aWord);
+    bool isInDictionary(const QString& aWord);
+    QString textUnderCursor() const;
 };
 
 

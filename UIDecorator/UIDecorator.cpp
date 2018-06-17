@@ -38,19 +38,29 @@ void UIDecorator::initialize()
     connect(ui->mTextEdit,&QTextEdit::textChanged,this,[&](){ applyStyle(); });
 
     initializeDictionaries();
+    initializeHighlighting();
     refreshUITemplatesList();
     refreshStylesList();
 }
 
 void UIDecorator::initializeDictionaries()
 {
-    QFont textFont("MS Shell Dlg 2");textFont.setBold(true);
-    QFont classesFont(textFont);
-    QFont cssFont(textFont);
+    ui->mTextEdit->addDictionary("://resources/classes.txt","://resources/classes.png");
+    ui->mTextEdit->addDictionary("://resources/css.txt","://resources/css.png");
+}
 
-    ui->mTextEdit->addDictionary("://resources/classes.txt",{Qt::red,classesFont},"://resources/classes.png");
-    ui->mTextEdit->addDictionary("://resources/css.txt",{Qt::blue,cssFont},"://resources/css.png");
+void UIDecorator::initializeHighlighting()
+{
+    QTextCharFormat classesFormat,cssFormat;
 
+    classesFormat.setForeground(Qt::red);
+    classesFormat.setFontWeight(QFont::Bold);
+
+    cssFormat.setForeground(Qt::blue);
+    cssFormat.setFontWeight(QFont::Bold);
+
+    ui->mTextEdit->addHighlightRule("://resources/classes.txt",classesFormat);
+    ui->mTextEdit->addHighlightRule("://resources/css.txt",cssFormat);
 }
 
 void UIDecorator::refreshStylesList(const QString &aFoldername)
@@ -93,7 +103,6 @@ void UIDecorator::loadStyle(const QString &aFilename)
     {
         QTextStream in(&file);
         ui->mTextEdit->setText(in.readAll());
-        ui->mTextEdit->formatText();
         applyStyle();
         file.close();
     }

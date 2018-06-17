@@ -27,12 +27,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     UIDecorator.cpp \
-    QTextEditExt.cpp
+    QTextEditExt.cpp \
+    QSyntaxHighlighterExt.cpp
 
 HEADERS += \
         mainwindow.h \
     UIDecorator.h \
-    QTextEditExt.h
+    QTextEditExt.h \
+    QSyntaxHighlighterExt.h
 
 FORMS += \
         mainwindow.ui \
