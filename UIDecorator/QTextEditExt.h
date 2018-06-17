@@ -2,15 +2,8 @@
 #define QTEXTEDITEXT_H
 
 #include <QTextEdit>
+#include <QCompleterExt.h>
 #include <QSyntaxHighlighterExt.h>
-
-class QCompleter;
-class QStandardItemModel;
-
-struct Dictionary{
-    QString mIcon;
-    QStringList mWords;
-};
 
 class QTextEditExt : public QTextEdit
 {
@@ -20,11 +13,11 @@ public:
     QTextEditExt(QWidget *parent = 0);
     ~QTextEditExt();
 
-    void addDictionary(const QString& aFilename,const QString& aIconFilename = "");
-    void clearDictionary();
+    void addCompletionDictionary(const QString& aFilename,const QString& aIconFilename = "");
+    void clearCompletionDictionary();
 
-    void addHighlightRule(const QString& aFilename, const QTextCharFormat& aFormat);
-    void clearHighlightRules();
+    void addHighlightionRule(const QString& aFilename, const QTextCharFormat& aFormat);
+    void clearHighlightionRules();
 
     bool isTextChanged() const;
     void setTextChangedState(bool aIsChanged);
@@ -37,18 +30,11 @@ private slots:
     void insertCompletion(const QString &completion);
 
 private:
-    QCompleter *mCompleter;
+    QCompleterExt *mCompleter;
     QSyntaxHighlighterExt* mHighlighter;
-
-    QVector<Dictionary> mDictionaries;    
-
-    QStandardItemModel* mModel{nullptr};
     bool mIsTextChanged{false};
 
     void initialize();
-    void resetModel();
-    void resetCompleter();
-    bool isInDictionary(const QString& aWord);
     QString textUnderCursor() const;
 };
 

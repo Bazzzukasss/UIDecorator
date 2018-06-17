@@ -45,8 +45,8 @@ void UIDecorator::initialize()
 
 void UIDecorator::initializeDictionaries()
 {
-    ui->mTextEdit->addDictionary("://resources/classes.txt","://resources/classes.png");
-    ui->mTextEdit->addDictionary("://resources/css.txt","://resources/css.png");
+    ui->mTextEdit->addCompletionDictionary("://resources/classes.txt","://resources/classes.png");
+    ui->mTextEdit->addCompletionDictionary("://resources/css.txt","://resources/css.png");
 }
 
 void UIDecorator::initializeHighlighting()
@@ -59,8 +59,8 @@ void UIDecorator::initializeHighlighting()
     cssFormat.setForeground(Qt::blue);
     cssFormat.setFontWeight(QFont::Bold);
 
-    ui->mTextEdit->addHighlightRule("://resources/classes.txt",classesFormat);
-    ui->mTextEdit->addHighlightRule("://resources/css.txt",cssFormat);
+    ui->mTextEdit->addHighlightionRule("://resources/classes.txt",classesFormat);
+    ui->mTextEdit->addHighlightionRule("://resources/css.txt",cssFormat);
 }
 
 void UIDecorator::refreshStylesList(const QString &aFoldername)
@@ -133,6 +133,7 @@ void UIDecorator::saveStyle(const QString& aFilename)
         QTextStream stream(&file);
         stream << ui->mTextEdit->toPlainText();
         file.close();
+        ui->mTextEdit->setTextChangedState(false);
     }
 }
 

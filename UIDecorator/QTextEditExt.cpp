@@ -4,8 +4,6 @@
 #include <QAbstractItemView>
 #include <QDebug>
 #include <QApplication>
-#include <QModelIndex>
-#include <QStandardItemModel>
 #include <QScrollBar>
 #include <set>
 
@@ -16,13 +14,12 @@ QTextEditExt::QTextEditExt(QWidget *parent)
 }
 
 QTextEditExt::~QTextEditExt()
-{
-    delete mModel;
+{    
 }
 
 void QTextEditExt::initialize()
 {
-    mCompleter = new QCompleter(this);
+    mCompleter = new QCompleterExt(this);
     mCompleter->setWidget(this);
     mCompleter->setCompletionMode(QCompleter::PopupCompletion);
     mCompleter->setCaseSensitivity(Qt::CaseInsensitive);
@@ -59,14 +56,6 @@ bool QTextEditExt::isTextChanged() const
 void QTextEditExt::setTextChangedState(bool aIsChanged)
 {
     mIsTextChanged = aIsChanged;
-}
-
-bool QTextEditExt::isInDictionary(const QString &aWord)
-{
-    for (const auto& dictionary : mDictionaries)
-        if(dictionary.mWords.contains(aWord))
-            return true;
-    return false;
 }
 
 void QTextEditExt::focusInEvent(QFocusEvent *e)
@@ -124,76 +113,22 @@ void QTextEditExt::keyPressEvent(QKeyEvent *e)
     mCompleter->complete(cr); // popup it up!
 }
 
-void QTextEditExt::resetCompleter()
-{
-    mCompleter->setModel( mModel );
-}
-void QTextEditExt::resetModel()
-{
-    std::set< std::pair<std::string,std::string> > wordsSet;
-
-    if(mModel != nullptr)
-        delete mModel;
-
-    for(auto& dictionary : mDictionaries)
-        for(auto& word : dictionary.mWords)
-            wordsSet.insert(std::pair<std::string,std::string>(word.toStdString(),dictionary.mIcon.toStdString()));
-
-    mModel = new QStandardItemModel(0,1);
-
-    for(auto& word : wordsSet)
-    {
-        QList<QStandardItem*> newRow;
-        for (int i=0;i<mModel->columnCount();i++)
-        {
-            QIcon icon(QString().fromStdString(word.second));
-            QString string = QString().fromStdString(word.first);
-
-            QStandardItem* itm = new QStandardItem( icon, string);
-            newRow.append(itm);
-        }
-        mModel->appendRow(newRow);
-    }
-
-}
-
-void QTextEditExt::clearDictionary()
-{
-    mDictionaries.clear();
-}
-
-void QTextEditExt::addHighlightRule(const QString &aFilename, const QTextCharFormat &aFormat)
+void QTextEditExt::addHighlightionRule(const QString &aFilename, const QTextCharFormat &aFormat)
 {
     mHighlighter->addRule(aFilename,aFormat);
 }
 
-void QTextEditExt::clearHighlightRules()
+void QTextEditExt::clearHighlightionRules()
 {
     mHighlighter->clearRules();
 }
 
-void QTextEditExt::addDictionary(const QString &aFilename, const QString &aIconFilename)
+void QTextEditExt::addCompletionDictionary(const QString &aFilename, const QString &aIconFilename)
 {
-    QFile file(aFilename);
-    if (file.open(QFile::ReadOnly))
-    {
-        QStringList wordsList;
-        std::set<std::string> wordsSet;
+    mCompleter->addDictionary(aFilename,aIconFilename);
+}
 
-        while (!file.atEnd())
-        {
-            QByteArray line = file.readLine();
-            if (!line.isEmpty())
-            {
-                QStringList wordsInLine = QString(line.trimmed()).split(":");
-                wordsSet.insert(wordsInLine.at(0).toStdString());
-            }
-        }
-        for(auto& str : wordsSet)
-            wordsList << QString().fromStdString(str);
-
-        mDictionaries.push_back( {aIconFilename,wordsList} );
-        resetModel();
-        resetCompleter();
-    }
+void QTextEditExt::clearCompletionDictionary()
+{
+    mCompleter->clearDictionaries();
 }
