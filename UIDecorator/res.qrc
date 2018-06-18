@@ -4,10 +4,11 @@
         <file>resources/css.png</file>
         <file>resources/css.txt</file>
         <file>resources/classes.png</file>
-        <file>resources/Add.png</file>
-        <file>resources/Clipboard.png</file>
-        <file>resources/Delete.png</file>
-        <file>resources/Save.png</file>
         <file>resources/icon.png</file>
+        <file>resources/Add.png</file>
+        <file>resources/Copy.png</file>
+        <file>resources/Delete.png</file>
+        <file>resources/Open.png</file>
+        <file>resources/Save.png</file>
     </qresource>
 </RCC>

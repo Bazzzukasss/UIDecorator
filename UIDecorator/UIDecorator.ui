@@ -32,17 +32,12 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="mFrame1">
+    <widget class="QFrame" name="mUITemplateFrame1">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>3</horstretch>
+       <horstretch>5</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -67,6 +62,80 @@
        <number>0</number>
       </property>
       <item>
+       <widget class="QFrame" name="mUISelectionFrame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>9</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>9</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="minimumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="res.qrc">
+             <normaloff>:/resources/Open.png</normaloff>:/resources/Open.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="mComboBoxUITemplates">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -80,7 +149,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QFrame" name="mFrame2">
+       <widget class="QFrame" name="mUITemplateFrame2">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
@@ -168,10 +237,10 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame_2">
+    <widget class="QFrame" name="mStyleFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>2</horstretch>
+       <horstretch>4</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
@@ -182,6 +251,9 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -195,56 +267,9 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="label_3">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>UI Templates:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="mComboBoxUITemplates">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Styles:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QFrame" name="frame_3">
+       <widget class="QFrame" name="mStyleSelectionFrame">
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
@@ -254,16 +279,22 @@
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>9</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>9</number>
          </property>
          <item>
           <widget class="QComboBox" name="mComboBoxStyles">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -386,24 +417,11 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/resources/Clipboard.png</normaloff>:/resources/Clipboard.png</iconset>
+             <normaloff>:/resources/Copy.png</normaloff>:/resources/Copy.png</iconset>
            </property>
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Current CSS Style:</string>
-        </property>
        </widget>
       </item>
       <item>

@@ -26,8 +26,8 @@ void UIDecorator::initialize()
     mpLayout = new QVBoxLayout(ui->mUIFrame);
     mpLayout->setMargin(0);
 
-    ui->mFrame1->setAutoFillBackground(true);
-    ui->mFrame2->setAutoFillBackground(true);
+    ui->mUITemplateFrame1->setAutoFillBackground(true);
+    ui->mUITemplateFrame2->setAutoFillBackground(true);
 
     connect(ui->mComboBoxUITemplates,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ loadUITemplate(aFilename); });
     connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ selectStyle(aFilename); });
