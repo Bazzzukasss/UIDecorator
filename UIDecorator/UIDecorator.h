@@ -32,9 +32,10 @@ private:
     QString mCurrentStyleName;
 
     void refreshStylesList(const QString& aFoldername = STYLE_FOLDER);
-    void refreshUITemplatesList(const QString& aFoldername = UITEMPLATES_FOLDER);
+    void refreshUITemplatesList();
 
     void loadUITemplate(const QString& aFilename);
+    void openUITemplate();
     void loadStyle(const QString& aFilename);
     void newStyle();
     void saveStyle(const QString& aFilename);

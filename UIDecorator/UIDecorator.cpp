@@ -7,6 +7,7 @@
 #include <QInputDialog>
 #include <QClipboard>
 #include <QMessageBox>
+#include <QFileDialog>
 
 UIDecorator::UIDecorator(QWidget *parent) :
     QFrame(parent),
@@ -36,11 +37,13 @@ void UIDecorator::initialize()
     connect(ui->mButtonSave,&QPushButton::clicked,this,[&](){ saveStyle(ui->mComboBoxStyles->currentText()); });
     connect(ui->mButtonClipboard,&QPushButton::clicked,this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
     connect(ui->mTextEdit,&QTextEdit::textChanged,this,[&](){ applyStyle(); });
+    connect(ui->mButtonOpenUI,&QPushButton::clicked,this,[&](){ openUITemplate(); });
 
     initializeDictionaries();
     initializeHighlighting();
-    refreshUITemplatesList();
+    //refreshUITemplatesList();
     refreshStylesList();
+    selectStyle(ui->mComboBoxStyles->currentText());
 }
 
 void UIDecorator::initializeDictionaries()
@@ -66,21 +69,24 @@ void UIDecorator::initializeHighlighting()
 void UIDecorator::refreshStylesList(const QString &aFoldername)
 {
     auto files = QDir(aFoldername).entryList(QStringList() << "*.css",QDir::Files);
+    ui->mComboBoxStyles->blockSignals(true);
     ui->mComboBoxStyles->clear();
     ui->mComboBoxStyles->addItems(files);
+    ui->mComboBoxStyles->blockSignals(false);
 }
 
-void UIDecorator::refreshUITemplatesList(const QString &aFoldername)
+void UIDecorator::refreshUITemplatesList()
 {
-    auto files = QDir(aFoldername).entryList(QStringList() << "*.ui",QDir::Files);
+    ui->mComboBoxUITemplates->blockSignals(true);
     ui->mComboBoxUITemplates->clear();
-    ui->mComboBoxUITemplates->addItems(files);
+    ui->mComboBoxUITemplates->addItems(mUITemplates);
+    ui->mComboBoxUITemplates->blockSignals(false);
 }
 
 void UIDecorator::loadUITemplate(const QString &aFilename)
 {
     QUiLoader loader;
-    QFile file(QString(UITEMPLATES_FOLDER)+QDir::separator()+aFilename);
+    QFile file(aFilename);
     file.open(QFile::ReadOnly);
     if(file.isOpen())
     {
@@ -93,6 +99,24 @@ void UIDecorator::loadUITemplate(const QString &aFilename)
         mpLayout->addWidget(mpCurrentWidget);
         applyStyle();
     }
+}
+
+void UIDecorator::openUITemplate()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open UI template"), "", tr("UI Files (*.ui)"));
+
+    if(fileName.isEmpty())
+        return;
+
+    if(!mUITemplates.contains(fileName))
+    {
+        mUITemplates.append(fileName);
+        refreshUITemplatesList();
+    }
+    ui->mComboBoxUITemplates->blockSignals(true);
+    ui->mComboBoxUITemplates->setCurrentText(fileName);
+    ui->mComboBoxUITemplates->blockSignals(false);
+    loadUITemplate(fileName);
 }
 
 void UIDecorator::loadStyle(const QString &aFilename)
