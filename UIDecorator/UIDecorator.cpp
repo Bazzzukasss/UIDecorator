@@ -8,6 +8,7 @@
 #include <QClipboard>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QFileInfo>
 
 UIDecorator::UIDecorator(QWidget *parent) :
     QFrame(parent),
@@ -19,6 +20,7 @@ UIDecorator::UIDecorator(QWidget *parent) :
 
 UIDecorator::~UIDecorator()
 {
+    saveSettings();
     delete ui;
 }
 
@@ -30,20 +32,48 @@ void UIDecorator::initialize()
     ui->mUITemplateFrame1->setAutoFillBackground(true);
     ui->mUITemplateFrame2->setAutoFillBackground(true);
 
-    connect(ui->mComboBoxUITemplates,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ loadUITemplate(aFilename); });
+    connect(ui->mComboBoxUITemplates,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ selectUITemplate(aFilename); });
     connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ selectStyle(aFilename); });
     connect(ui->mButtonNew,&QPushButton::clicked,this,[&](){ newStyle(); });
     connect(ui->mButtonDelete,&QPushButton::clicked,this,[&](){ deleteStyle(ui->mComboBoxStyles->currentText()); });
     connect(ui->mButtonSave,&QPushButton::clicked,this,[&](){ saveStyle(ui->mComboBoxStyles->currentText()); });
     connect(ui->mButtonClipboard,&QPushButton::clicked,this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
     connect(ui->mTextEdit,&QTextEdit::textChanged,this,[&](){ applyStyle(); });
-    connect(ui->mButtonOpenUI,&QPushButton::clicked,this,[&](){ openUITemplate(); });
+    connect(ui->mButtonOpenUI,&QPushButton::clicked,this,[&](){ addUITemplate(); });
 
+    initializeSettings();
     initializeDictionaries();
     initializeHighlighting();
-    //refreshUITemplatesList();
+    refreshUITemplatesList();
     refreshStylesList();
     selectStyle(ui->mComboBoxStyles->currentText());
+    selectUITemplate(ui->mComboBoxUITemplates->currentText());
+}
+
+void UIDecorator::saveSettings()
+{
+    mSettings->beginGroup("UITemplates");
+    mSettings->beginWriteArray("files");
+    int  i(0);
+    for(auto& name : mUITemplates){
+        mSettings->setArrayIndex(i++);
+        mSettings->setValue("files",name);
+    }
+    mSettings->endArray();
+    mSettings->endGroup();
+}
+
+void UIDecorator::initializeSettings()
+{
+    mSettings = new QSettings("config.ini",QSettings::IniFormat,this);
+    mSettings->beginGroup("UITemplates");
+    int size = mSettings->beginReadArray("files");
+    for(int i = 0; i < size; i++){
+        mSettings->setArrayIndex(i);
+        mUITemplates.append( mSettings->value("files").toString());
+    }
+    mSettings->endArray();
+    mSettings->endGroup();
 }
 
 void UIDecorator::initializeDictionaries()
@@ -79,11 +109,16 @@ void UIDecorator::refreshUITemplatesList()
 {
     ui->mComboBoxUITemplates->blockSignals(true);
     ui->mComboBoxUITemplates->clear();
-    ui->mComboBoxUITemplates->addItems(mUITemplates);
+    for(auto& filename : mUITemplates)
+    {
+        QFileInfo f(filename);
+        if(f.exists())
+            ui->mComboBoxUITemplates->addItem(filename);
+    }
     ui->mComboBoxUITemplates->blockSignals(false);
 }
 
-void UIDecorator::loadUITemplate(const QString &aFilename)
+void UIDecorator::selectUITemplate(const QString &aFilename)
 {
     QUiLoader loader;
     QFile file(aFilename);
@@ -101,7 +136,7 @@ void UIDecorator::loadUITemplate(const QString &aFilename)
     }
 }
 
-void UIDecorator::openUITemplate()
+void UIDecorator::addUITemplate()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open UI template"), "", tr("UI Files (*.ui)"));
 
@@ -116,7 +151,7 @@ void UIDecorator::openUITemplate()
     ui->mComboBoxUITemplates->blockSignals(true);
     ui->mComboBoxUITemplates->setCurrentText(fileName);
     ui->mComboBoxUITemplates->blockSignals(false);
-    loadUITemplate(fileName);
+    selectUITemplate(fileName);
 }
 
 void UIDecorator::loadStyle(const QString &aFilename)
@@ -140,9 +175,9 @@ void UIDecorator::newStyle()
                                              "StyleNew", &ok);
     if (!fileName.isEmpty())
     {
-        saveStyle(fileName + ".css");
-        ui->mComboBoxStyles->blockSignals(true);
+        saveStyle(fileName + ".css");        
         refreshStylesList();
+        ui->mComboBoxStyles->blockSignals(true);
         ui->mComboBoxStyles->setCurrentText(fileName + ".css");
         ui->mComboBoxStyles->blockSignals(false);
     }

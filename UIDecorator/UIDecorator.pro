@@ -41,8 +41,8 @@ HEADERS += \
 FORMS += \
         mainwindow.ui \
     UIDecorator.ui \
-    widgets.ui \
-    containers.ui
+    containers.ui \
+    widgets.ui
 
 RESOURCES += \
     res.qrc

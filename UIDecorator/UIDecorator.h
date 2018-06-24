@@ -4,13 +4,14 @@
 #include <QFrame>
 #include <QStringList>
 #include <QVBoxLayout>
+#include <QSettings>
 
 namespace Ui {
 class UIDecorator;
 }
 
 #define STYLE_FOLDER "Styles"
-#define UITEMPLATES_FOLDER "UITemplates"
+
 
 class UIDecorator : public QFrame
 {
@@ -30,12 +31,13 @@ private:
     QVBoxLayout* mpLayout{nullptr};
     bool isStyleChanged{false};
     QString mCurrentStyleName;
+    QSettings* mSettings;
 
     void refreshStylesList(const QString& aFoldername = STYLE_FOLDER);
     void refreshUITemplatesList();
 
-    void loadUITemplate(const QString& aFilename);
-    void openUITemplate();
+    void selectUITemplate(const QString& aFilename);
+    void addUITemplate();
     void loadStyle(const QString& aFilename);
     void newStyle();
     void saveStyle(const QString& aFilename);
@@ -43,7 +45,9 @@ private:
     void applyStyle();
     void selectStyle(const QString& aFilename);
 
+    void saveSettings();
     void initialize();
+    void initializeSettings();
     void initializeDictionaries();
     void initializeHighlighting();
 };
