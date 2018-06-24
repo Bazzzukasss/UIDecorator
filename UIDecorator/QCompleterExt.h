@@ -2,30 +2,32 @@
 #define QCOMPLETEREXT_H
 
 #include <QCompleter>
+class QTableView;
 
 class QStandardItemModel;
 
 struct CompletionDictionary{
     QString mIcon;
-    QStringList mWords;
+    QStringList mData;
 };
 
 class QCompleterExt : public QCompleter
 {
     Q_OBJECT
 public:
-    QCompleterExt(QObject* parent = 0);
+    QCompleterExt(QObject *parent = 0);
     ~QCompleterExt();
 
     void addDictionary(const QString& aFilename,const QString& aIconFilename = "");
     void clearDictionaries();
 
 private:
+    QTableView* mView;
     QStandardItemModel* mModel{nullptr};
     QVector<CompletionDictionary> mDictionaries;
 
     void resetModel();
-    void resetCompleter();
+    void initialize();
 };
 
 #endif // QCOMPLETEREXT_H

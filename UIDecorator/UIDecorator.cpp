@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QSettings>
 
 UIDecorator::UIDecorator(QWidget *parent) :
     QFrame(parent),
@@ -33,13 +34,13 @@ void UIDecorator::initialize()
     ui->mUITemplateFrame2->setAutoFillBackground(true);
 
     connect(ui->mComboBoxUITemplates,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ selectUITemplate(aFilename); });
-    connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ selectStyle(aFilename); });
-    connect(ui->mButtonNew,&QPushButton::clicked,this,[&](){ newStyle(); });
-    connect(ui->mButtonDelete,&QPushButton::clicked,this,[&](){ deleteStyle(ui->mComboBoxStyles->currentText()); });
-    connect(ui->mButtonSave,&QPushButton::clicked,this,[&](){ saveStyle(ui->mComboBoxStyles->currentText()); });
-    connect(ui->mButtonClipboard,&QPushButton::clicked,this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
-    connect(ui->mTextEdit,&QTextEdit::textChanged,this,[&](){ applyStyle(); });
-    connect(ui->mButtonOpenUI,&QPushButton::clicked,this,[&](){ addUITemplate(); });
+    connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,     this,[&](const QString& aFilename){ selectStyle(aFilename); });
+    connect(ui->mButtonNew,&QPushButton::clicked,                   this,[&](){ newStyle(); });
+    connect(ui->mButtonDelete,&QPushButton::clicked,                this,[&](){ deleteStyle(ui->mComboBoxStyles->currentText()); });
+    connect(ui->mButtonSave,&QPushButton::clicked,                  this,[&](){ saveStyle(ui->mComboBoxStyles->currentText()); });
+    connect(ui->mButtonClipboard,&QPushButton::clicked,             this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
+    connect(ui->mTextEdit,&QTextEdit::textChanged,                  this,[&](){ applyStyle(); });
+    connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ addUITemplate(); });
 
     initializeSettings();
     initializeDictionaries();

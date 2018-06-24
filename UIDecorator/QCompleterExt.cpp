@@ -3,10 +3,13 @@
 #include <set>
 #include <QModelIndex>
 #include <QStandardItemModel>
+#include <QHeaderView>
+#include <QTableView>
 
 QCompleterExt::QCompleterExt(QObject *parent)
     :QCompleter(parent)
-{    
+{
+    initialize();
 }
 
 QCompleterExt::~QCompleterExt()
@@ -14,29 +17,37 @@ QCompleterExt::~QCompleterExt()
     delete mModel;
 }
 
+void QCompleterExt::initialize()
+{
+    mView = new QTableView(qobject_cast<QWidget*>(this));
+    mView->setAlternatingRowColors(true);
+    mView->setShowGrid(false);
+    mView->horizontalHeader()->setStretchLastSection(true);
+    mView->horizontalHeader()->hide();
+    mView->verticalHeader()->hide();
+    mView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    mView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    mView->setWordWrap(true);
+
+    setPopup(mView);
+}
+
 void QCompleterExt::addDictionary(const QString &aFilename, const QString &aIconFilename)
 {
     QFile file(aFilename);
     if (file.open(QFile::ReadOnly))
     {
-        QStringList wordsList;
-        std::set<std::string> wordsSet;
+        QStringList dataList;
 
-        while (!file.atEnd())
-        {
-            QByteArray line = file.readLine();
-            if (!line.isEmpty())
-            {
-                QStringList wordsInLine = QString(line.trimmed()).split(":");
-                wordsSet.insert(wordsInLine.at(0).toStdString());
-            }
-        }
-        for(auto& str : wordsSet)
-            wordsList << QString().fromStdString(str);
+        while(!file.atEnd())
+        dataList.append(file.readLine());
 
-        mDictionaries.push_back( {aIconFilename,wordsList} );
+        mDictionaries.push_back( {aIconFilename,dataList} );
         resetModel();
-    }
+
+        mView->resizeColumnsToContents();
+        mView->sortByColumn(0);
+    }    
 }
 
 void QCompleterExt::clearDictionaries()
@@ -46,30 +57,27 @@ void QCompleterExt::clearDictionaries()
 
 void QCompleterExt::resetModel()
 {
-    std::set< std::pair<std::string,std::string> > wordsSet;
-
     if(mModel != nullptr)
         delete mModel;
 
+    mModel = new QStandardItemModel(0,2);
+
     for(auto& dictionary : mDictionaries)
-        for(auto& word : dictionary.mWords)
-            wordsSet.insert(std::pair<std::string,std::string>(word.toStdString(),dictionary.mIcon.toStdString()));
-
-    mModel = new QStandardItemModel(0,1);
-
-    for(auto& word : wordsSet)
-    {
-        QList<QStandardItem*> newRow;
-        for (int i=0;i<mModel->columnCount();i++)
+        for(auto& data : dictionary.mData)
         {
-            QIcon icon(QString().fromStdString(word.second));
-            QString string = QString().fromStdString(word.first);
+            QList<QStandardItem*> newRow;
 
-            QStandardItem* itm = new QStandardItem( icon, string);
-            newRow.append(itm);
+            QIcon icon(dictionary.mIcon);
+            int delimerPos = data.indexOf(":");
+            QString tag = data.left(delimerPos);
+            QString description = data.right(data.length() - delimerPos - 1);
+
+            QStandardItem* itemTag = new QStandardItem( icon, tag );
+            QStandardItem* itemDescription = new QStandardItem( description );
+            newRow.append({itemTag,itemDescription});
+
+            mModel->appendRow(newRow);
         }
-        mModel->appendRow(newRow);
-    }
 
     setModel( mModel );
 }

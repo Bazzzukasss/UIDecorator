@@ -2,8 +2,8 @@
 #define QTEXTEDITEXT_H
 
 #include <QTextEdit>
-#include <QCompleterExt.h>
-#include <QSyntaxHighlighterExt.h>
+class QCompleterExt;
+class QSyntaxHighlighterExt;
 
 class QTextEditExt : public QTextEdit
 {

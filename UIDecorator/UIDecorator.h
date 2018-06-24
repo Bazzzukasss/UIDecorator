@@ -4,7 +4,7 @@
 #include <QFrame>
 #include <QStringList>
 #include <QVBoxLayout>
-#include <QSettings>
+class QSettings;
 
 namespace Ui {
 class UIDecorator;

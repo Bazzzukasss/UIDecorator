@@ -6,6 +6,8 @@
 #include <QApplication>
 #include <QScrollBar>
 #include <set>
+#include "QCompleterExt.h"
+#include "QSyntaxHighlighterExt.h"
 
 QTextEditExt::QTextEditExt(QWidget *parent)
     : QTextEdit(parent)
@@ -24,6 +26,8 @@ void QTextEditExt::initialize()
     mCompleter->setCompletionMode(QCompleter::PopupCompletion);
     mCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     mCompleter->setWrapAround(false);
+    mCompleter->setCompletionColumn(0);
+
     connect(mCompleter,    SIGNAL(activated(QString)), this,   SLOT(insertCompletion(QString)));
 
     mHighlighter = new QSyntaxHighlighterExt(document());
@@ -109,7 +113,8 @@ void QTextEditExt::keyPressEvent(QKeyEvent *e)
     }
 
     QRect cr = cursorRect();
-    cr.setWidth(mCompleter->popup()->sizeHintForColumn(0) + mCompleter->popup()->verticalScrollBar()->sizeHint().width());
+    //cr.setWidth(mCompleter->popup()->sizeHintForColumn(0) + mCompleter->popup()->sizeHintForColumn(1) + mCompleter->popup()->verticalScrollBar()->sizeHint().width());
+    cr.setWidth(width());
     mCompleter->complete(cr); // popup it up!
 }
 
