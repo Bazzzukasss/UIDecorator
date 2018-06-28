@@ -101,7 +101,7 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/resources/Open.png</normaloff>:/resources/Open.png</iconset>
+             <normaloff>:/resources/open.png</normaloff>:/resources/open.png</iconset>
            </property>
           </widget>
          </item>
@@ -339,7 +339,7 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/resources/Delete.png</normaloff>:/resources/Delete.png</iconset>
+             <normaloff>:/resources/delete.png</normaloff>:/resources/delete.png</iconset>
            </property>
           </widget>
          </item>
@@ -365,7 +365,7 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/resources/Add.png</normaloff>:/resources/Add.png</iconset>
+             <normaloff>:/resources/add.png</normaloff>:/resources/add.png</iconset>
            </property>
           </widget>
          </item>
@@ -391,7 +391,7 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/resources/Save.png</normaloff>:/resources/Save.png</iconset>
+             <normaloff>:/resources/save.png</normaloff>:/resources/save.png</iconset>
            </property>
           </widget>
          </item>
@@ -417,7 +417,7 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/resources/Copy.png</normaloff>:/resources/Copy.png</iconset>
+             <normaloff>:/resources/copy.png</normaloff>:/resources/copy.png</iconset>
            </property>
           </widget>
          </item>

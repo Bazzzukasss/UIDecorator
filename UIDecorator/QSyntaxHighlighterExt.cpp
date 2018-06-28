@@ -1,4 +1,5 @@
 #include "QSyntaxHighlighterExt.h"
+#include <QDebug>
 
 QSyntaxHighlighterExt::QSyntaxHighlighterExt(QTextDocument *parent)
     :QSyntaxHighlighter(parent)
@@ -8,6 +9,7 @@ QSyntaxHighlighterExt::QSyntaxHighlighterExt(QTextDocument *parent)
 
 void QSyntaxHighlighterExt::addRule(const QRegularExpression &aExpression, const QTextCharFormat &aFormat)
 {
+    qDebug()<<aExpression;
     mRules.push_back({aExpression,aFormat});
 }
 
@@ -29,7 +31,7 @@ void QSyntaxHighlighterExt::addRule(const QString &aFilename, const QTextCharFor
             QByteArray line = file.readLine();
             if (!line.isEmpty())
             {
-                QStringList wordsInLine = QString(line.trimmed()).split(":");
+                QStringList wordsInLine = QString(line.trimmed()).split("#");
                 wordsList << wordsInLine.at(0);
             }
         }

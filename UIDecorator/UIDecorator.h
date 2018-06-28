@@ -4,6 +4,8 @@
 #include <QFrame>
 #include <QStringList>
 #include <QVBoxLayout>
+
+class QTextCharFormat;
 class QSettings;
 
 namespace Ui {
@@ -49,7 +51,7 @@ private:
     void initialize();
     void initializeSettings();
     void initializeDictionaries();
-    void initializeHighlighting();
+    void initializeDictionaries(const QString& aFilename, const QString aIcon, const QTextCharFormat& aFormat);
 };
 
 #endif // UIDECORATOR_H

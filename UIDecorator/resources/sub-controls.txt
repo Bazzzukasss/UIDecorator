@@ -1,0 +1,36 @@
+::add-line#The button to add a line of a QScrollBar.
+::add-page#The region between the handle (slider) and the add-line of a QScrollBar.
+::branch#The branch indicator of a QTreeView.
+::chunk#The progress chunk of a QProgressBar.
+::close-button#The close button of a QDockWidget or tabs of QTabBar
+::corner#The corner between two scrollbars in a QAbstractScrollArea
+::down-arrow#The down arrow of a QComboBox, QHeaderView (sort indicator), QScrollBar or QSpinBox.
+::down-button#The down button of a QScrollBar or a QSpinBox.
+::drop-down#The drop-down button of a QComboBox.
+::float-button#The float button of a QDockWidget
+::groove#The groove of a QSlider.
+::indicator#The indicator of a QAbstractItemView, a QCheckBox, a QRadioButton, a checkable QMenu item or a checkable QGroupBox.
+::handle#The handle (slider) of a QScrollBar, a QSplitter, or a QSlider.
+::icon#The icon of a QAbstractItemView or a QMenu.
+::item#An item of a QAbstractItemView, a QMenuBar, a QMenu, or a QStatusBar.
+::left-arrow#The left arrow of a QScrollBar.
+::left-corner#The left corner of a QTabWidget. For example, this control can be used to control position the left corner widget in a QTabWidget.
+::menu-arrow#The arrow of a QToolButton with a menu.
+::menu-button#The menu button of a QToolButton.
+::menu-indicator#The menu indicator of a QPushButton.
+::right-arrow#The right arrow of a QMenu or a QScrollBar.
+::pane#The pane (frame) of a QTabWidget.
+::right-corner#The right corner of a QTabWidget. For example, this control can be used to control the position the right corner widget in a QTabWidget.
+::scroller#The scroller of a QMenu or QTabBar.
+::section#The section of a QHeaderView.
+::separator#The separator of a QMenu or in a QMainWindow.
+::sub-line#The button to subtract a line of a QScrollBar.
+::sub-page#The region between the handle (slider) and the sub-line of a QScrollBar.
+::tab#The tab of a QTabBar or QToolBox.
+::tab-bar#The tab bar of a QTabWidget. This subcontrol exists only to control the position of the QTabBar inside the QTabWidget. To style the tabs using the ::tab subcontrol.
+::tear#The tear indicator of a QTabBar.
+::tearoff#The tear-off indicator of a QMenu.
+::text#The text of a QAbstractItemView.
+::title#The title of a QGroupBox or a QDockWidget.
+::up-arrow#The up arrow of a QHeaderView (sort indicator), QScrollBar or a QSpinBox.
+::up-button#The up button of a QSpinBox.

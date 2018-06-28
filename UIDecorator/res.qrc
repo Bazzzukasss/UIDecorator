@@ -1,14 +1,20 @@
 <RCC>
     <qresource prefix="/">
+        <file>resources/add.png</file>
+        <file>resources/classes.png</file>
         <file>resources/classes.txt</file>
+        <file>resources/copy.png</file>
         <file>resources/css.png</file>
         <file>resources/css.txt</file>
-        <file>resources/classes.png</file>
+        <file>resources/delete.png</file>
         <file>resources/icon.png</file>
-        <file>resources/Add.png</file>
-        <file>resources/Copy.png</file>
-        <file>resources/Delete.png</file>
-        <file>resources/Open.png</file>
-        <file>resources/Save.png</file>
+        <file>resources/open.png</file>
+        <file>resources/save.png</file>
+        <file>resources/values.txt</file>
+        <file>resources/values.png</file>
+        <file>resources/pseudo-states.txt</file>
+        <file>resources/sub-controls.txt</file>
+        <file>resources/pseudo-states.ico</file>
+        <file>resources/sub-controls.png</file>
     </qresource>
 </RCC>

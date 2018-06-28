@@ -44,7 +44,6 @@ void UIDecorator::initialize()
 
     initializeSettings();
     initializeDictionaries();
-    initializeHighlighting();
     refreshUITemplatesList();
     refreshStylesList();
     selectStyle(ui->mComboBoxStyles->currentText());
@@ -79,13 +78,7 @@ void UIDecorator::initializeSettings()
 
 void UIDecorator::initializeDictionaries()
 {
-    ui->mTextEdit->addCompletionDictionary("://resources/classes.txt","://resources/classes.png");
-    ui->mTextEdit->addCompletionDictionary("://resources/css.txt","://resources/css.png");
-}
-
-void UIDecorator::initializeHighlighting()
-{
-    QTextCharFormat classesFormat,cssFormat;
+    QTextCharFormat classesFormat,cssFormat,valuesFormat,controlsFormat,statesFormat;
 
     classesFormat.setForeground(Qt::red);
     classesFormat.setFontWeight(QFont::Bold);
@@ -93,8 +86,26 @@ void UIDecorator::initializeHighlighting()
     cssFormat.setForeground(Qt::blue);
     cssFormat.setFontWeight(QFont::Bold);
 
-    ui->mTextEdit->addHighlightionRule("://resources/classes.txt",classesFormat);
-    ui->mTextEdit->addHighlightionRule("://resources/css.txt",cssFormat);
+    valuesFormat.setForeground(Qt::gray);
+    valuesFormat.setFontWeight(QFont::Bold);
+
+    controlsFormat.setForeground(Qt::darkRed);
+    controlsFormat.setFontWeight(QFont::Bold);
+
+    statesFormat.setForeground(Qt::magenta);
+    statesFormat.setFontWeight(QFont::Bold);
+
+    initializeDictionaries("://resources/classes.txt","://resources/classes.png",classesFormat);
+    initializeDictionaries("://resources/css.txt","://resources/css.png",cssFormat);
+    initializeDictionaries("://resources/values.txt","://resources/values.png",valuesFormat);
+    initializeDictionaries("://resources/sub-controls.txt","://resources/sub-controls.png",controlsFormat);
+    initializeDictionaries("://resources/pseudo-states.txt","://resources/pseudo-states.png",statesFormat);
+}
+
+void UIDecorator::initializeDictionaries(const QString& aFilename, const QString aIcon, const QTextCharFormat& aFormat)
+{    
+    ui->mTextEdit->addCompletionDictionary(aFilename,aIcon);
+    ui->mTextEdit->addHighlightionRule(aFilename,aFormat);
 }
 
 void UIDecorator::refreshStylesList(const QString &aFoldername)
