@@ -33,9 +33,12 @@ private:
     QCompleterExt *mCompleter;
     QSyntaxHighlighterExt* mHighlighter;
     bool mIsTextChanged{false};
+    QString mCurrentWord;
+    int mWordStartPosition;
+    int mWordEndPosition;
 
     void initialize();
-    QString textUnderCursor() const;
+    QString textUnderCursor();
 };
 
 

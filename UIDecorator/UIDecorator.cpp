@@ -95,9 +95,9 @@ void UIDecorator::initializeDictionaries()
     statesFormat.setForeground(Qt::magenta);
     statesFormat.setFontWeight(QFont::Bold);
 
+    initializeDictionaries("://resources/values.txt","://resources/values.png",valuesFormat);
     initializeDictionaries("://resources/classes.txt","://resources/classes.png",classesFormat);
     initializeDictionaries("://resources/css.txt","://resources/css.png",cssFormat);
-    initializeDictionaries("://resources/values.txt","://resources/values.png",valuesFormat);
     initializeDictionaries("://resources/sub-controls.txt","://resources/sub-controls.png",controlsFormat);
     initializeDictionaries("://resources/pseudo-states.txt","://resources/pseudo-states.png",statesFormat);
 }

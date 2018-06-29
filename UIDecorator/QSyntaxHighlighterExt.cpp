@@ -9,7 +9,6 @@ QSyntaxHighlighterExt::QSyntaxHighlighterExt(QTextDocument *parent)
 
 void QSyntaxHighlighterExt::addRule(const QRegularExpression &aExpression, const QTextCharFormat &aFormat)
 {
-    qDebug()<<aExpression;
     mRules.push_back({aExpression,aFormat});
 }
 

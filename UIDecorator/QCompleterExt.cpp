@@ -46,7 +46,7 @@ void QCompleterExt::addDictionary(const QString &aFilename, const QString &aIcon
         resetModel();
 
         mView->resizeColumnsToContents();
-        mView->sortByColumn(0);
+        mView->sortByColumn(0,Qt::SortOrder::AscendingOrder);
     }    
 }
 
@@ -69,7 +69,7 @@ void QCompleterExt::resetModel()
 
             QIcon icon(dictionary.mIcon);
             int delimerPos = data.indexOf("#");
-            QString tag = delimerPos > 0 ? data.left(delimerPos): data;
+            QString tag = delimerPos > 0 ? data.left(delimerPos): data.trimmed();
             QString description = delimerPos > 0 ? data.right(data.length() - delimerPos - 1) : "";
 
             QStandardItem* itemTag = new QStandardItem( icon, tag );
