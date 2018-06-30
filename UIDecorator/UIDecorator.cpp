@@ -93,14 +93,32 @@ void UIDecorator::initializeSettings()
 void UIDecorator::initializeDictionaries()
 {
     QTextCharFormat classesFormat,cssFormat,valuesFormat,controlsFormat,statesFormat;
-
+/*
+    Qt::black,
+    Qt::white,
+    Qt::darkGray,
+    Qt::gray,
+    Qt::lightGray,
+    Qt::red,
+    Qt::green,
+    Qt::blue,
+    Qt::cyan,
+    Qt::magenta,
+    Qt::yellow,
+    Qt::darkRed,
+    Qt::darkGreen,
+    Qt::darkBlue,
+    Qt::darkCyan,
+    Qt::darkMagenta,
+    Qt::darkYellow
+            */
     classesFormat.setForeground(Qt::red);
     classesFormat.setFontWeight(QFont::Bold);
 
     cssFormat.setForeground(Qt::blue);
     cssFormat.setFontWeight(QFont::Bold);
 
-    valuesFormat.setForeground(Qt::gray);
+    valuesFormat.setForeground(Qt::darkGray);
     valuesFormat.setFontWeight(QFont::Bold);
 
     controlsFormat.setForeground(Qt::darkRed);

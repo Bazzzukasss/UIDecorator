@@ -29,7 +29,6 @@ void QTextEditExt::initialize()
     mCompleter->setCompletionColumn(0);
 
     connect(mCompleter,    SIGNAL(activated(QString)), this,   SLOT(insertCompletion(QString)));
-    connect(this,&QTextEditExt::textChanged,[&](){ mIsTextChanged = true; });
 
     mHighlighter = new QSyntaxHighlighterExt(document());
 }
@@ -116,6 +115,7 @@ void QTextEditExt::insertLine(const QString &aLine)
     cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor);
     setTextCursor(cursor);
     insertPlainText(aLine);
+    mIsTextChanged = true;
 }
 
 void QTextEditExt::focusInEvent(QFocusEvent *e)

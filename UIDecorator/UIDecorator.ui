@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>12</pointsize>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -133,7 +133,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>12</pointsize>
             </font>
            </property>
           </widget>
@@ -315,7 +315,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>12</pointsize>
             </font>
            </property>
            <property name="editable">
@@ -494,12 +494,12 @@
           <widget class="QTextEditExt" name="mTextEdit">
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 255, 222);
-border-radius: 4px;</string>
+            <string notr="true"/>
            </property>
            <property name="frameShape">
             <enum>QFrame::NoFrame</enum>
