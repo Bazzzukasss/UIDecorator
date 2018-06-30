@@ -40,12 +40,16 @@ private:
 
     void selectUITemplate(const QString& aFilename);
     void addUITemplate();
+
     void loadStyle(const QString& aFilename);
     void newStyle();
     void saveStyle(const QString& aFilename);
     void deleteStyle(const QString& aFilename);
     void applyStyle();
     void selectStyle(const QString& aFilename);
+
+    void addColor();
+    void addFont();
 
     void saveSettings();
     void initialize();

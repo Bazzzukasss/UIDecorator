@@ -10,6 +10,8 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QSettings>
+#include <QColorDialog>
+#include <QFontDialog>
 
 UIDecorator::UIDecorator(QWidget *parent) :
     QFrame(parent),
@@ -41,6 +43,8 @@ void UIDecorator::initialize()
     connect(ui->mButtonClipboard,&QPushButton::clicked,             this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
     connect(ui->mTextEdit,&QTextEdit::textChanged,                  this,[&](){ applyStyle(); });
     connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ addUITemplate(); });
+    connect(ui->mButtonColor,&QPushButton::clicked,                 this,[&](){ addColor(); });
+    connect(ui->mButtonFont,&QPushButton::clicked,                  this,[&](){ addFont(); });
 
     initializeSettings();
     initializeDictionaries();
@@ -249,4 +253,22 @@ void UIDecorator::selectStyle(const QString& aFilename)
 
     loadStyle(aFilename);
     mCurrentStyleName = aFilename;
+}
+
+void UIDecorator::addColor()
+{
+    QColor color = QColorDialog::getColor();
+    ui->mTextEdit->insertPlainText(color.name(QColor::NameFormat::HexArgb) + ";");
+}
+
+void UIDecorator::addFont()
+{
+    bool ok;
+    QFont font =QFontDialog::getFont(&ok);
+    if(ok)
+    {
+        QString fontStyle = font.style() ? " italic" : "";
+        QString fontWeight = font.bold() ? " bold" : "";
+        ui->mTextEdit->insertPlainText(QString("font :%1%2 %3pt \"%4\"").arg(fontWeight).arg(fontStyle).arg(font.pointSize()).arg(font.family()));
+    }
 }

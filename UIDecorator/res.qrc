@@ -16,5 +16,7 @@
         <file>resources/sub-controls.txt</file>
         <file>resources/pseudo-states.ico</file>
         <file>resources/sub-controls.png</file>
+        <file>resources/color.png</file>
+        <file>resources/font.png</file>
     </qresource>
 </RCC>

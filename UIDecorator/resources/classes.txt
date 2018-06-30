@@ -146,3 +146,4 @@ QStackedLayout#Stack of widgets where only one widget is visible at a time
 QButtonGroup#Container to organize groups of button widgets
 QGroupBox#Group box frame with a title
 QStackedWidget#Stack of widgets where only one widget is visible at a time
+QTextEdit#Widget that is used to edit and display both plain and rich text
