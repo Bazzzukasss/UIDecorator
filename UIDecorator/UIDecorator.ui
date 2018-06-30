@@ -121,7 +121,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>40</width>
+             <width>0</width>
              <height>30</height>
             </size>
            </property>
@@ -303,7 +303,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>40</width>
+             <width>0</width>
              <height>30</height>
             </size>
            </property>
@@ -494,15 +494,19 @@
           <widget class="QTextEditExt" name="mTextEdit">
            <property name="font">
             <font>
+             <pointsize>10</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
-           <property name="styleSheet">
-            <string notr="true"/>
-           </property>
            <property name="frameShape">
             <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="lineWrapMode">
+            <enum>QTextEdit::NoWrap</enum>
+           </property>
+           <property name="tabStopWidth">
+            <number>40</number>
            </property>
           </widget>
          </item>
@@ -586,6 +590,38 @@
               <property name="icon">
                <iconset resource="res.qrc">
                 <normaloff>:/resources/font.png</normaloff>:/resources/font.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="mButtonResource">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/resources/image.png</normaloff>:/resources/image.png</iconset>
               </property>
               <property name="iconSize">
                <size>

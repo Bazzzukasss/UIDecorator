@@ -13,6 +13,7 @@
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QMenu>
+#include "ResourceDialog.h"
 
 UIDecorator::UIDecorator(QWidget *parent) :
     QFrame(parent),
@@ -44,7 +45,6 @@ void UIDecorator::initialize()
     connect(ui->mButtonClipboard,&QPushButton::clicked,             this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
     connect(ui->mTextEdit,&QTextEdit::textChanged,                  this,[&](){ applyStyle(); });
     connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ addUITemplate(); });
-    //connect(ui->mButtonColor,&QPushButton::clicked,                 this,[&](){ addColor(); });
     connect(ui->mButtonFont,&QPushButton::clicked,                  this,[&](){ addFont(); });
 
     QMenu* mColorSelectionMenu = new QMenu(this);
@@ -55,6 +55,14 @@ void UIDecorator::initialize()
     for(auto& property : colorProperties)
         mColorSelectionMenu->addAction(property,[=](){addColor(property);});
 
+    QMenu* mResourceSelectionMenu = new QMenu(this);
+    ui->mButtonResource->setMenu(mResourceSelectionMenu);
+    QStringList resourceProperties{"image","background-image","border-image"};
+
+    for(auto& property : resourceProperties)
+        mResourceSelectionMenu->addAction(property,[=](){addResource(property);});
+
+    mResourceDialog = new ResourceDialog(this);
 
     initializeSettings();
     initializeDictionaries();
@@ -93,25 +101,7 @@ void UIDecorator::initializeSettings()
 void UIDecorator::initializeDictionaries()
 {
     QTextCharFormat classesFormat,cssFormat,valuesFormat,controlsFormat,statesFormat;
-/*
-    Qt::black,
-    Qt::white,
-    Qt::darkGray,
-    Qt::gray,
-    Qt::lightGray,
-    Qt::red,
-    Qt::green,
-    Qt::blue,
-    Qt::cyan,
-    Qt::magenta,
-    Qt::yellow,
-    Qt::darkRed,
-    Qt::darkGreen,
-    Qt::darkBlue,
-    Qt::darkCyan,
-    Qt::darkMagenta,
-    Qt::darkYellow
-            */
+
     classesFormat.setForeground(Qt::red);
     classesFormat.setFontWeight(QFont::Bold);
 
@@ -281,6 +271,11 @@ void UIDecorator::selectStyle(const QString& aFilename)
 
     loadStyle(aFilename);
     mCurrentStyleName = aFilename;
+}
+
+void UIDecorator::addResource(const QString &aProperty)
+{
+    mResourceDialog->exec();
 }
 
 void UIDecorator::addColor(const QString& aProperty)

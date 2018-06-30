@@ -29,20 +29,23 @@ SOURCES += \
     UIDecorator.cpp \
     QTextEditExt.cpp \
     QSyntaxHighlighterExt.cpp \
-    QCompleterExt.cpp
+    QCompleterExt.cpp \
+    ResourceDialog.cpp
 
 HEADERS += \
         mainwindow.h \
     UIDecorator.h \
     QTextEditExt.h \
     QSyntaxHighlighterExt.h \
-    QCompleterExt.h
+    QCompleterExt.h \
+    ResourceDialog.h
 
 FORMS += \
         mainwindow.ui \
     UIDecorator.ui \
     containers.ui \
-    widgets.ui
+    widgets.ui \
+    ResourceDialog.ui
 
 RESOURCES += \
     res.qrc
