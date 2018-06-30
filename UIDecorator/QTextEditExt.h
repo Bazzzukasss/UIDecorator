@@ -22,6 +22,8 @@ public:
     bool isTextChanged() const;
     void setTextChangedState(bool aIsChanged);
 
+    void insertLine(const QString& aLine);
+
 protected:
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *e) Q_DECL_OVERRIDE;

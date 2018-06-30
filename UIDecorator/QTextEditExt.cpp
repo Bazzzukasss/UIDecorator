@@ -29,6 +29,7 @@ void QTextEditExt::initialize()
     mCompleter->setCompletionColumn(0);
 
     connect(mCompleter,    SIGNAL(activated(QString)), this,   SLOT(insertCompletion(QString)));
+    connect(this,&QTextEditExt::textChanged,[&](){ mIsTextChanged = true; });
 
     mHighlighter = new QSyntaxHighlighterExt(document());
 }
@@ -109,6 +110,14 @@ void QTextEditExt::setTextChangedState(bool aIsChanged)
     mIsTextChanged = aIsChanged;
 }
 
+void QTextEditExt::insertLine(const QString &aLine)
+{
+    QTextCursor cursor = textCursor();
+    cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor);
+    setTextCursor(cursor);
+    insertPlainText(aLine);
+}
+
 void QTextEditExt::focusInEvent(QFocusEvent *e)
 {
     if (mCompleter)
@@ -118,7 +127,6 @@ void QTextEditExt::focusInEvent(QFocusEvent *e)
 
 void QTextEditExt::keyPressEvent(QKeyEvent *e)
 {
-    mIsTextChanged = true;
     if (mCompleter && mCompleter->popup()->isVisible()) {
         // The following keys are forwarded by the completer to the widget
        switch (e->key()) {

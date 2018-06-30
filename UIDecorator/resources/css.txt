@@ -2,6 +2,7 @@ align-content#Specifies the alignment between the lines inside a flexible contai
 align-items#Specifies the alignment for items inside a flexible container
 align-self#Specifies the alignment for selected items inside a flexible container
 all#Resets all properties (except unicode-bidi and direction)
+alternate-background-color#The alternate background color used in QAbstractItemView subclasses.If this property is not set, the default value is whatever is set for the palette's AlternateBase role.
 animation#A shorthand property for all the animation properties
 animation-delay#Specifies a delay for the start of an animation
 animation-direction#Specifies whether an animation should be played forwards, backwards or in alternate cycles

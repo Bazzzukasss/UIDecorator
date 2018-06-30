@@ -12,6 +12,7 @@
 #include <QSettings>
 #include <QColorDialog>
 #include <QFontDialog>
+#include <QMenu>
 
 UIDecorator::UIDecorator(QWidget *parent) :
     QFrame(parent),
@@ -43,8 +44,17 @@ void UIDecorator::initialize()
     connect(ui->mButtonClipboard,&QPushButton::clicked,             this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
     connect(ui->mTextEdit,&QTextEdit::textChanged,                  this,[&](){ applyStyle(); });
     connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ addUITemplate(); });
-    connect(ui->mButtonColor,&QPushButton::clicked,                 this,[&](){ addColor(); });
+    //connect(ui->mButtonColor,&QPushButton::clicked,                 this,[&](){ addColor(); });
     connect(ui->mButtonFont,&QPushButton::clicked,                  this,[&](){ addFont(); });
+
+    QMenu* mColorSelectionMenu = new QMenu(this);
+    ui->mButtonColor->setMenu(mColorSelectionMenu);
+    QStringList colorProperties{"color","background-color","alternate-background-color","border-color","border-top-color","border-right-color",
+                               "border-bottom-color","border-left-color","gridline-color","selection-color","selection-background-color"};
+
+    for(auto& property : colorProperties)
+        mColorSelectionMenu->addAction(property,[=](){addColor(property);});
+
 
     initializeSettings();
     initializeDictionaries();
@@ -255,10 +265,10 @@ void UIDecorator::selectStyle(const QString& aFilename)
     mCurrentStyleName = aFilename;
 }
 
-void UIDecorator::addColor()
+void UIDecorator::addColor(const QString& aProperty)
 {
     QColor color = QColorDialog::getColor();
-    ui->mTextEdit->insertPlainText(color.name(QColor::NameFormat::HexArgb) + ";");
+    ui->mTextEdit->insertLine( "\n" + aProperty + " : " + color.name(QColor::NameFormat::HexArgb) + ";");
 }
 
 void UIDecorator::addFont()
@@ -269,6 +279,6 @@ void UIDecorator::addFont()
     {
         QString fontStyle = font.style() ? " italic" : "";
         QString fontWeight = font.bold() ? " bold" : "";
-        ui->mTextEdit->insertPlainText(QString("font :%1%2 %3pt \"%4\"").arg(fontWeight).arg(fontStyle).arg(font.pointSize()).arg(font.family()));
+        ui->mTextEdit->insertLine(QString("\nfont :%1%2 %3pt \"%4\";").arg(fontWeight).arg(fontStyle).arg(font.pointSize()).arg(font.family()));
     }
 }

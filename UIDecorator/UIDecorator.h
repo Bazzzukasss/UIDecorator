@@ -48,7 +48,7 @@ private:
     void applyStyle();
     void selectStyle(const QString& aFilename);
 
-    void addColor();
+    void addColor(const QString &aProperty = "color");
     void addFont();
 
     void saveSettings();
