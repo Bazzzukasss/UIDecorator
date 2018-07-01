@@ -19,5 +19,6 @@
         <file>resources/color.png</file>
         <file>resources/font.png</file>
         <file>resources/image.png</file>
+        <file>resources/gradient.png</file>
     </qresource>
 </RCC>

@@ -8,6 +8,7 @@
 class ResourceDialog;
 class QTextCharFormat;
 class QSettings;
+class GradientDialog;
 
 namespace Ui {
 class UIDecorator;
@@ -36,6 +37,7 @@ private:
     QString mCurrentStyleName;
     QSettings* mSettings;
     ResourceDialog* mResourceDialog;
+    GradientDialog* mGradientDialog;
 
     void refreshStylesList(const QString& aFoldername = STYLE_FOLDER);
     void refreshUITemplatesList();
@@ -50,6 +52,7 @@ private:
     void applyStyle();
     void selectStyle(const QString& aFilename);
 
+    void addGradient(const QString& aProperty = "image");
     void addResource(const QString& aProperty = "image");
     void addColor(const QString &aProperty = "color");
     void addFont();

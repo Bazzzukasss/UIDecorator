@@ -16,5 +16,5 @@ ResourceDialog::~ResourceDialog()
 
 void ResourceDialog::initialize()
 {
-    connect(ui->mB)
+
 }

@@ -14,6 +14,7 @@
 #include <QFontDialog>
 #include <QMenu>
 #include "ResourceDialog.h"
+#include "GradientDialog.h"
 
 UIDecorator::UIDecorator(QWidget *parent) :
     QFrame(parent),
@@ -33,6 +34,8 @@ void UIDecorator::initialize()
 {
     mpLayout = new QVBoxLayout(ui->mUIFrame);
     mpLayout->setMargin(0);
+    mResourceDialog = new ResourceDialog(this);
+    mGradientDialog = new GradientDialog(this);
 
     ui->mUITemplateFrame1->setAutoFillBackground(true);
     ui->mUITemplateFrame2->setAutoFillBackground(true);
@@ -47,6 +50,7 @@ void UIDecorator::initialize()
     connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ addUITemplate(); });
     connect(ui->mButtonFont,&QPushButton::clicked,                  this,[&](){ addFont(); });
 
+    //Color Menu
     QMenu* mColorSelectionMenu = new QMenu(this);
     ui->mButtonColor->setMenu(mColorSelectionMenu);
     QStringList colorProperties{"color","background-color","alternate-background-color","border-color","border-top-color","border-right-color",
@@ -55,6 +59,7 @@ void UIDecorator::initialize()
     for(auto& property : colorProperties)
         mColorSelectionMenu->addAction(property,[=](){addColor(property);});
 
+    //Resource Menu
     QMenu* mResourceSelectionMenu = new QMenu(this);
     ui->mButtonResource->setMenu(mResourceSelectionMenu);
     QStringList resourceProperties{"image","background-image","border-image"};
@@ -62,7 +67,12 @@ void UIDecorator::initialize()
     for(auto& property : resourceProperties)
         mResourceSelectionMenu->addAction(property,[=](){addResource(property);});
 
-    mResourceDialog = new ResourceDialog(this);
+    //Gradient Menu
+    QMenu* mGradientSelectionMenu = new QMenu(this);
+    ui->mButtonGradient->setMenu(mGradientSelectionMenu);
+
+    for(auto& property : colorProperties)
+        mGradientSelectionMenu->addAction(property,[=](){addGradient(property);});
 
     initializeSettings();
     initializeDictionaries();
@@ -271,6 +281,11 @@ void UIDecorator::selectStyle(const QString& aFilename)
 
     loadStyle(aFilename);
     mCurrentStyleName = aFilename;
+}
+
+void UIDecorator::addGradient(const QString &aProperty)
+{
+    mGradientDialog->exec();
 }
 
 void UIDecorator::addResource(const QString &aProperty)
