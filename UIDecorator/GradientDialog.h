@@ -19,6 +19,7 @@ public:
 
 private:
     QString mResult;
+    QString mGradient;
     QVector<QColor> mColors;
     Ui::GradientDialog *ui;
 

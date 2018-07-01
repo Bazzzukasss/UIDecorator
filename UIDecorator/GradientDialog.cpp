@@ -18,16 +18,18 @@ GradientDialog::~GradientDialog()
 QString GradientDialog::getGradient()
 {
     exec();
-    return mResult;
+    QString res = mResult;
+    mResult = "";
+    return res;
 }
 
 void GradientDialog::initialize()
 {
-    setWindowFlag(Qt::WindowContextHelpButtonHint,false);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     mColors.push_back(Qt::white);
     mColors.push_back(Qt::black);
-    connect(ui->mButtonOk,&QPushButton::clicked,                                                        [&](){ drawGradient();close(); });
-    connect(ui->mButtonCancel,&QPushButton::clicked,                                                    [&](){ mResult = ""; close(); });
+    connect(ui->mButtonOk,&QPushButton::clicked,                                                        [&](){ drawGradient();mResult = mGradient;close(); });
+    connect(ui->mButtonCancel,&QPushButton::clicked,                                                    [&](){ close(); });
     connect(ui->mButtonColor1,&QPushButton::clicked,                                                    [&](){ selectColor(0); });
     connect(ui->mButtonColor2,&QPushButton::clicked,                                                    [&](){ selectColor(1); });
     connect(ui->mButtonSwitch,&QPushButton::clicked,                                                    [&](){ switchColors(); });
@@ -67,10 +69,10 @@ void GradientDialog::drawGradient()
     ui->mButtonColor2->setStyleSheet( QString("background-color: %1;border: none;").arg(colors[1]) );
 
     switch (ui->mTypeComboBox->currentIndex()) {
-        case 0: mResult = QString("qlineargradient(x1:0, y1:1, x2:1, y2:1, stop:%1 %2, stop:%3 %4)").arg(points[0]).arg(colors[0]).arg(points[1]).arg(colors[1]); break;
-        case 1: mResult = QString("qlineargradient(x1:1, y1:0, x2:1, y2:1, stop:%1 %2, stop:%3 %4)").arg(points[0]).arg(colors[0]).arg(points[1]).arg(colors[1]); break;
-        case 2: mResult = QString("qradialgradient(cx:0.5, cy:0.5, radius:%1, fx:0.5, fy:0.5, stop:%2 %3, stop:%4 %5)").arg(value / 360.0f).arg(points[0]).arg(colors[0]).arg(points[1]).arg(colors[1]); break;
-        case 3: mResult = QString("qconicalgradient(cx:0.5, cy:0.5, angle:%1, stop:%2 %3, stop:%4 %5)").arg(value).arg(points[0]).arg(colors[0]).arg(points[1]).arg(colors[1]); break;
+        case 0: mGradient = QString("qlineargradient(x1:0, y1:1, x2:1, y2:1, stop:%1 %2, stop:%3 %4)").arg(points[0]).arg(colors[0]).arg(points[1]).arg(colors[1]); break;
+        case 1: mGradient = QString("qlineargradient(x1:1, y1:0, x2:1, y2:1, stop:%1 %2, stop:%3 %4)").arg(points[0]).arg(colors[0]).arg(points[1]).arg(colors[1]); break;
+        case 2: mGradient = QString("qradialgradient(cx:0.5, cy:0.5, radius:%1, fx:0.5, fy:0.5, stop:%2 %3, stop:%4 %5)").arg(value / 360.0f).arg(points[0]).arg(colors[0]).arg(points[1]).arg(colors[1]); break;
+        case 3: mGradient = QString("qconicalgradient(cx:0.5, cy:0.5, angle:%1, stop:%2 %3, stop:%4 %5)").arg(value).arg(points[0]).arg(colors[0]).arg(points[1]).arg(colors[1]); break;
     }
-    ui->mDemoWidget->setStyleSheet("background: " + mResult);
+    ui->mDemoWidget->setStyleSheet("background: " + mGradient);
 }

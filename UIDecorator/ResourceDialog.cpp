@@ -23,6 +23,6 @@ QString ResourceDialog::getResource()
 
 void ResourceDialog::initialize()
 {
-    setWindowFlag(Qt::WindowContextHelpButtonHint,false);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 }
 
