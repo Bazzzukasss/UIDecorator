@@ -114,7 +114,7 @@ void QTextEditExt::insertLine(const QString &aLine)
     QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::MoveAnchor);
     setTextCursor(cursor);
-    insertPlainText(aLine);
+    insertPlainText("\n" + aLine);
     mIsTextChanged = true;
 }
 

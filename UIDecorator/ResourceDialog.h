@@ -15,7 +15,10 @@ public:
     explicit ResourceDialog(QWidget *parent = 0);
     ~ResourceDialog();
 
+    QString getResource();
+
 private:
+    QString mResult;
     Ui::ResourceDialog *ui;
 
     void initialize();

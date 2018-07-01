@@ -15,8 +15,17 @@ public:
     explicit GradientDialog(QWidget *parent = 0);
     ~GradientDialog();
 
+    QString getGradient();
+
 private:
+    QString mResult;
+    QVector<QColor> mColors;
     Ui::GradientDialog *ui;
+
+    void initialize();
+    void selectColor(int aIndex);
+    void switchColors();
+    void drawGradient();
 };
 
 #endif // GRADIENTDIALOG_H

@@ -14,7 +14,15 @@ ResourceDialog::~ResourceDialog()
     delete ui;
 }
 
+QString ResourceDialog::getResource()
+{
+    exec();
+    mResult = "TEST";
+    return mResult;
+}
+
 void ResourceDialog::initialize()
 {
-
+    setWindowFlag(Qt::WindowContextHelpButtonHint,false);
 }
+

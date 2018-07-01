@@ -285,18 +285,22 @@ void UIDecorator::selectStyle(const QString& aFilename)
 
 void UIDecorator::addGradient(const QString &aProperty)
 {
-    mGradientDialog->exec();
+    QString gradient =  mGradientDialog->getGradient();
+    if(!gradient.isEmpty())
+        ui->mTextEdit->insertLine( aProperty + " : " + gradient + ";");
 }
 
 void UIDecorator::addResource(const QString &aProperty)
 {
-    mResourceDialog->exec();
+    QString resource = mResourceDialog->getResource();
+    if(!resource.isEmpty())
+        ui->mTextEdit->insertLine( aProperty + " : " + resource + ";");
 }
 
 void UIDecorator::addColor(const QString& aProperty)
 {
     QColor color = QColorDialog::getColor();
-    ui->mTextEdit->insertLine( "\n" + aProperty + " : " + color.name(QColor::NameFormat::HexArgb) + ";");
+    ui->mTextEdit->insertLine( aProperty + " : " + color.name(QColor::NameFormat::HexArgb) + ";");
 }
 
 void UIDecorator::addFont()
@@ -307,6 +311,6 @@ void UIDecorator::addFont()
     {
         QString fontStyle = font.style() ? " italic" : "";
         QString fontWeight = font.bold() ? " bold" : "";
-        ui->mTextEdit->insertLine(QString("\nfont :%1%2 %3pt \"%4\";").arg(fontWeight).arg(fontStyle).arg(font.pointSize()).arg(font.family()));
+        ui->mTextEdit->insertLine(QString("font :%1%2 %3pt \"%4\";").arg(fontWeight).arg(fontStyle).arg(font.pointSize()).arg(font.family()));
     }
 }
