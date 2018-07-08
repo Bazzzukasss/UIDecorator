@@ -32,23 +32,24 @@ UIDecorator::~UIDecorator()
 
 void UIDecorator::initialize()
 {
+    mpSettings = new QSettings("config.ini",QSettings::IniFormat,this);
     mpLayout = new QVBoxLayout(ui->mUIFrame);
     mpLayout->setMargin(0);
-    mResourceDialog = new ResourceDialog(this);
-    mGradientDialog = new GradientDialog(this);
+    mpResourceDialog = new ResourceDialog(this);
+    mpGradientDialog = new GradientDialog(this);
 
     ui->mUITemplateFrame1->setAutoFillBackground(true);
     ui->mUITemplateFrame2->setAutoFillBackground(true);
 
-    connect(ui->mComboBoxUITemplates,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ selectUITemplate(aFilename); });
+    connect(ui->mComboBoxUITemplates,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ selectUITemplateFile(aFilename); });
     connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,     this,[&](const QString& aFilename){ selectStyle(aFilename); });
     connect(ui->mButtonNew,&QPushButton::clicked,                   this,[&](){ newStyle(); });
     connect(ui->mButtonDelete,&QPushButton::clicked,                this,[&](){ deleteStyle(ui->mComboBoxStyles->currentText()); });
     connect(ui->mButtonSave,&QPushButton::clicked,                  this,[&](){ saveStyle(ui->mComboBoxStyles->currentText()); });
     connect(ui->mButtonClipboard,&QPushButton::clicked,             this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
     connect(ui->mTextEdit,&QTextEdit::textChanged,                  this,[&](){ applyStyle(); });
-    connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ addUITemplate(); });
-    connect(ui->mButtonFont,&QPushButton::clicked,                  this,[&](){ addFont(); });
+    connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ addUITemplateFile(); });
+    connect(ui->mButtonFont,&QPushButton::clicked,                  this,[&](){ insertFont(); });
 
     //Color Menu
     QMenu* mColorSelectionMenu = new QMenu(this);
@@ -57,7 +58,7 @@ void UIDecorator::initialize()
                                "border-bottom-color","border-left-color","gridline-color","selection-color","selection-background-color"};
 
     for(auto& property : colorProperties)
-        mColorSelectionMenu->addAction(property,[=](){addColor(property);});
+        mColorSelectionMenu->addAction(property,[=](){insertColor(property);});
 
     //Resource Menu
     QMenu* mResourceSelectionMenu = new QMenu(this);
@@ -65,47 +66,49 @@ void UIDecorator::initialize()
     QStringList resourceProperties{"image","background-image","border-image"};
 
     for(auto& property : resourceProperties)
-        mResourceSelectionMenu->addAction(property,[=](){addResource(property);});
+        mResourceSelectionMenu->addAction(property,[=](){insertResource(property);});
 
     //Gradient Menu
     QMenu* mGradientSelectionMenu = new QMenu(this);
     ui->mButtonGradient->setMenu(mGradientSelectionMenu);
 
     for(auto& property : colorProperties)
-        mGradientSelectionMenu->addAction(property,[=](){addGradient(property);});
+        mGradientSelectionMenu->addAction(property,[=](){insertGradient(property);});
 
-    initializeSettings();
+    loadSettings();
     initializeDictionaries();
+
     refreshUITemplatesList();
     refreshStylesList();
+
     selectStyle(ui->mComboBoxStyles->currentText());
-    selectUITemplate(ui->mComboBoxUITemplates->currentText());
+    selectUITemplateFile(ui->mComboBoxUITemplates->currentText());
 }
 
 void UIDecorator::saveSettings()
 {
-    mSettings->beginGroup("UITemplates");
-    mSettings->beginWriteArray("files");
+    mpSettings->beginGroup("UITemplates");
+    mpSettings->beginWriteArray("files");
     int  i(0);
     for(auto& name : mUITemplates){
-        mSettings->setArrayIndex(i++);
-        mSettings->setValue("files",name);
+        mpSettings->setArrayIndex(i++);
+        mpSettings->setValue("files",name);
     }
-    mSettings->endArray();
-    mSettings->endGroup();
+    mpSettings->endArray();
+    mpSettings->endGroup();
 }
 
-void UIDecorator::initializeSettings()
+void UIDecorator::loadSettings()
 {
-    mSettings = new QSettings("config.ini",QSettings::IniFormat,this);
-    mSettings->beginGroup("UITemplates");
-    int size = mSettings->beginReadArray("files");
+    mUITemplates.clear();
+    mpSettings->beginGroup("UITemplates");
+    int size = mpSettings->beginReadArray("files");
     for(int i = 0; i < size; i++){
-        mSettings->setArrayIndex(i);
-        mUITemplates.append( mSettings->value("files").toString());
+        mpSettings->setArrayIndex(i);
+        mUITemplates.append( mpSettings->value("files").toString());
     }
-    mSettings->endArray();
-    mSettings->endGroup();
+    mpSettings->endArray();
+    mpSettings->endGroup();
 }
 
 void UIDecorator::initializeDictionaries()
@@ -162,7 +165,7 @@ void UIDecorator::refreshUITemplatesList()
     ui->mComboBoxUITemplates->blockSignals(false);
 }
 
-void UIDecorator::selectUITemplate(const QString &aFilename)
+void UIDecorator::selectUITemplateFile(const QString &aFilename)
 {
     QUiLoader loader;
     QFile file(aFilename);
@@ -180,7 +183,7 @@ void UIDecorator::selectUITemplate(const QString &aFilename)
     }
 }
 
-void UIDecorator::addUITemplate()
+void UIDecorator::addUITemplateFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open UI template"), "", tr("UI Files (*.ui)"));
 
@@ -195,7 +198,7 @@ void UIDecorator::addUITemplate()
     ui->mComboBoxUITemplates->blockSignals(true);
     ui->mComboBoxUITemplates->setCurrentText(fileName);
     ui->mComboBoxUITemplates->blockSignals(false);
-    selectUITemplate(fileName);
+    selectUITemplateFile(fileName);
 }
 
 void UIDecorator::loadStyle(const QString &aFilename)
@@ -283,27 +286,27 @@ void UIDecorator::selectStyle(const QString& aFilename)
     mCurrentStyleName = aFilename;
 }
 
-void UIDecorator::addGradient(const QString &aProperty)
+void UIDecorator::insertGradient(const QString &aProperty)
 {
-    QString gradient =  mGradientDialog->getGradient();
+    QString gradient =  mpGradientDialog->getGradient();
     if(!gradient.isEmpty())
         ui->mTextEdit->insertLine( aProperty + " : " + gradient + ";");
 }
 
-void UIDecorator::addResource(const QString &aProperty)
+void UIDecorator::insertResource(const QString &aProperty)
 {
-    QString resource = mResourceDialog->getResource();
+    QString resource = mpResourceDialog->getResource();
     if(!resource.isEmpty())
         ui->mTextEdit->insertLine( aProperty + " : " + resource + ";");
 }
 
-void UIDecorator::addColor(const QString& aProperty)
+void UIDecorator::insertColor(const QString& aProperty)
 {
     QColor color = QColorDialog::getColor();
     ui->mTextEdit->insertLine( aProperty + " : " + color.name(QColor::NameFormat::HexArgb) + ";");
 }
 
-void UIDecorator::addFont()
+void UIDecorator::insertFont()
 {
     bool ok;
     QFont font =QFontDialog::getFont(&ok);
