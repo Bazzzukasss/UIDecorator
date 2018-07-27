@@ -225,3 +225,8 @@ word-spacing#Increases or decreases the space between words in a text
 word-wrap#Allows long, unbreakable words to be broken and wrap to the next line
 writing-mode#Specifies whether lines of text are laid out horizontally or vertically
 z-index#Sets the stack order of a positioned element
+subcontrol-origin#The origin rectangle of the subcontrol within the parent element.If this property is not specified, the default is padding
+subcontrol-position#	The alignment of the subcontrol within the origin rectangle specified by subcontrol-origin.If this property is not specified, it defaults to a value that depends on the subcontrol
+image#Specifi image
+selection-background-color#Color of selected item background
+selection-color#Color of selected item text

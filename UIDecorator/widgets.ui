@@ -111,6 +111,41 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <item>
+           <property name="text">
+            <string>Item1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item5</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Item7</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>
@@ -121,6 +156,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="text">
+           <string>dsfdsfds</string>
+          </property>
          </widget>
         </item>
         <item>
@@ -130,6 +168,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="value">
+           <number>64</number>
           </property>
          </widget>
         </item>

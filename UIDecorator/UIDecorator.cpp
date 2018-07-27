@@ -16,6 +16,8 @@
 #include "ResourceDialog.h"
 #include "GradientDialog.h"
 
+#define STYLES_FOLDER "Styles"
+
 UIDecorator::UIDecorator(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::UIDecorator)
@@ -32,6 +34,9 @@ UIDecorator::~UIDecorator()
 
 void UIDecorator::initialize()
 {
+    if( !QDir(STYLES_FOLDER).exists() )
+        QDir().mkdir(STYLES_FOLDER);
+
     mpSettings = new QSettings("config.ini",QSettings::IniFormat,this);
     mpLayout = new QVBoxLayout(ui->mUIFrame);
     mpLayout->setMargin(0);
@@ -130,7 +135,7 @@ void UIDecorator::initializeDictionaries()
     statesFormat.setForeground(Qt::magenta);
     statesFormat.setFontWeight(QFont::Bold);
 
-    initializeDictionaries("://resources/values.txt","://resources/values.png",valuesFormat);
+    //initializeDictionaries("://resources/values.txt","://resources/values.png",valuesFormat);
     initializeDictionaries("://resources/classes.txt","://resources/classes.png",classesFormat);
     initializeDictionaries("://resources/css.txt","://resources/css.png",cssFormat);
     initializeDictionaries("://resources/sub-controls.txt","://resources/sub-controls.png",controlsFormat);
@@ -232,7 +237,7 @@ void UIDecorator::newStyle()
 
 void UIDecorator::saveStyle(const QString& aFilename)
 {
-    QFile file("Styles/"+aFilename);
+    QFile file(QString("%1/%2").arg(STYLES_FOLDER).arg(aFilename));
 
     if (file.open(QIODevice::WriteOnly))
     {
