@@ -47,7 +47,93 @@ void QTextEditExt::insertCompletion(const QString& completion)
 
     setTextCursor(cursor);
 }
+QString QTextEditExt::textUnderCursor()
+{
+    QTextCursor cursor = textCursor();
+    QString text = toPlainText();
+    QString mCurrentWord;
 
+    auto addChToLeft = [&](const QChar& aCh){
+        mCurrentWord = QString("%1%2").arg(aCh).arg(mCurrentWord);
+        mWordStartPosition--;
+    };
+    auto addChToRight = [&](const QChar& aCh){
+        mCurrentWord = QString("%1%2").arg(mCurrentWord).arg(aCh);
+        mWordEndPosition++;
+    };
+
+    int position = cursor.position();
+    mWordStartPosition = mWordEndPosition = position;
+
+    //add symbols from left side of cursor
+    if(position > 0)
+    {
+        int p = position-1;
+        bool isDoubleDots(false);
+        do
+        {
+            QChar ch = text[p];
+
+            if( ch == ":" )
+            {
+                isDoubleDots = true;
+                addChToLeft(ch);
+                continue;
+            }
+
+            if( ch.isLetter() || ch == "-" )
+            {
+                if(isDoubleDots)
+                    break;
+                else
+                    addChToLeft(ch);
+                continue;
+            }
+
+            if( !ch.isLetter() )
+                break;
+
+        }while( --p >= 0 );
+
+        qDebug()<<"left:"<<mWordStartPosition<<mCurrentWord;
+    }
+
+    //add symbols from rigth side of cursor
+    if( position < text.length() )
+    {
+        int p = position;
+        do
+        {
+            QChar ch = text[p];
+
+            if( ch.isLetter() || ch == "-" )
+            {
+                addChToRight(ch);
+                continue;
+            }
+
+            if( ch == ":")
+            {
+                if(text.at(p-1) == ":")
+                {
+                    addChToRight(ch);
+                    continue;
+                }
+                else
+                    break;
+            }
+
+            if( !ch.isLetter() )
+                break;
+
+        }while( ++p < text.length() );
+
+        qDebug()<<"right:"<<mWordEndPosition<<mCurrentWord;
+    }
+
+    return mCurrentWord;
+}
+/*
 QString QTextEditExt::textUnderCursor()
 {
     QTextCursor cursor = textCursor();
@@ -58,13 +144,13 @@ QString QTextEditExt::textUnderCursor()
 
     int startPosition = cursor.anchor();
     mWordStartPosition = startPosition;
-
+qDebug()<<"before:"<<startPosition<<mCurrentWord;
     //remove none letters from end of the word under cursor
     int length = mCurrentWord.length();
     if( length > 0)
     {
        auto ch = mCurrentWord.right(1).at(0);
-       if(!ch.isLetterOrNumber() && ch != ":")
+       if(!ch.isLetterOrNumber() && ch != ":" && ch != "-")
            mCurrentWord = mCurrentWord.left(length - 1);
     }
 
@@ -75,9 +161,26 @@ QString QTextEditExt::textUnderCursor()
         while((ch == ":") && (startPosition > 0))
         {
             //qDebug()<<ch;
-            mCurrentWord =QString(":%1").arg(mCurrentWord);
+            mCurrentWord =QString("%1%2").arg(ch).arg(mCurrentWord);
             mWordStartPosition = startPosition;
             ch = text[--startPosition];
+        }
+    }
+
+    //addition - and text before to word under cursor
+    startPosition = cursor.anchor();
+    if(startPosition > 1)
+    {
+        auto ch = text[--startPosition];
+        if(ch == "-")
+        {
+            do
+            {
+                //qDebug()<<ch;
+                mCurrentWord =QString("%1%2").arg(ch).arg(mCurrentWord);
+                mWordStartPosition = startPosition;
+                ch = text[--startPosition];
+            }while( ch.isLetter() && (startPosition > 0));
         }
     }
 
@@ -96,9 +199,10 @@ QString QTextEditExt::textUnderCursor()
 
     mWordEndPosition = mWordStartPosition + mCurrentWord.length();
     //qDebug()<<mCurrentWord;
+    qDebug()<<"after:"<<mCurrentWord;
     return mCurrentWord;
 }
-
+*/
 bool QTextEditExt::isTextChanged() const
 {
     return mIsTextChanged;
@@ -163,6 +267,7 @@ void QTextEditExt::keyPressEvent(QKeyEvent *e)
     auto v5 = eow.contains(e->text().right(1));
    if (!isShortcut && (hasModifier || e->text().isEmpty()|| completionPrefix.length() < 1 || eow.contains(e->text().right(1))) )
     {
+       qDebug()<<v1<<v2<<v3<<v4<<v5;
         mCompleter->popup()->hide();
         return;
     }
