@@ -255,6 +255,8 @@ void UIDecorator::deleteStyle(const QString &aFilename)
     if(res == QMessageBox::Yes)
         file.remove();
     refreshStylesList();
+    mCurrentStyleName = ui->mComboBoxStyles->currentText();
+    loadStyle(mCurrentStyleName);
 }
 
 void UIDecorator::applyStyle()

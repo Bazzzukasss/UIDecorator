@@ -133,76 +133,7 @@ QString QTextEditExt::textUnderCursor()
 
     return mCurrentWord;
 }
-/*
-QString QTextEditExt::textUnderCursor()
-{
-    QTextCursor cursor = textCursor();
-    QString text = toPlainText();
 
-    cursor.select(QTextCursor::WordUnderCursor);
-    QString mCurrentWord = cursor.selectedText();
-
-    int startPosition = cursor.anchor();
-    mWordStartPosition = startPosition;
-qDebug()<<"before:"<<startPosition<<mCurrentWord;
-    //remove none letters from end of the word under cursor
-    int length = mCurrentWord.length();
-    if( length > 0)
-    {
-       auto ch = mCurrentWord.right(1).at(0);
-       if(!ch.isLetterOrNumber() && ch != ":" && ch != "-")
-           mCurrentWord = mCurrentWord.left(length - 1);
-    }
-
-    //addition : or :: to word under cursor
-    if(startPosition > 1)
-    {
-        auto ch = text[--startPosition];
-        while((ch == ":") && (startPosition > 0))
-        {
-            //qDebug()<<ch;
-            mCurrentWord =QString("%1%2").arg(ch).arg(mCurrentWord);
-            mWordStartPosition = startPosition;
-            ch = text[--startPosition];
-        }
-    }
-
-    //addition - and text before to word under cursor
-    startPosition = cursor.anchor();
-    if(startPosition > 1)
-    {
-        auto ch = text[--startPosition];
-        if(ch == "-")
-        {
-            do
-            {
-                //qDebug()<<ch;
-                mCurrentWord =QString("%1%2").arg(ch).arg(mCurrentWord);
-                mWordStartPosition = startPosition;
-                ch = text[--startPosition];
-            }while( ch.isLetter() && (startPosition > 0));
-        }
-    }
-
-    //addition letters to empty word under cursor
-    if(mCurrentWord.isEmpty())
-    {
-        auto ch = text[startPosition];
-        while( ch.isLetter() && (startPosition > 0))
-        {
-            //qDebug()<<ch;
-            mCurrentWord =QString("%1%2").arg(ch).arg(mCurrentWord);
-            mWordStartPosition = startPosition;
-            ch = text[--startPosition];
-        }
-    }
-
-    mWordEndPosition = mWordStartPosition + mCurrentWord.length();
-    //qDebug()<<mCurrentWord;
-    qDebug()<<"after:"<<mCurrentWord;
-    return mCurrentWord;
-}
-*/
 bool QTextEditExt::isTextChanged() const
 {
     return mIsTextChanged;
