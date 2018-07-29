@@ -17,8 +17,16 @@
    <iconset resource="res.qrc">
     <normaloff>:/resources/icon.png</normaloff>:/resources/icon.png</iconset>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#centralWidget{
+	background-color: rgb(255, 255, 255);
+}</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="topMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="UIDecorator" name="frame">
       <property name="frameShape">
