@@ -33,7 +33,8 @@ SOURCES += \
     ResourceDialog.cpp \
     GradientDialog.cpp \
     Treeitem.cpp \
-    XMLProcessor.cpp
+    XMLProcessor.cpp \
+    UIRoutiner.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -45,7 +46,8 @@ HEADERS += \
     GradientDialog.h \
     Treeitem.h \
     XMLData.h \
-    XMLProcessor.h
+    XMLProcessor.h \
+    UIRoutiner.h
 
 FORMS += \
         mainwindow.ui \

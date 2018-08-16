@@ -34,7 +34,6 @@ private:
     QString mCurrentStyle;
     QWidget* mpCurrentWidget{nullptr};
     QVBoxLayout* mpLayout{nullptr};
-    bool isStyleChanged{false};
     QString mCurrentStyleName;
     QSettings* mpSettings;
     ResourceDialog* mpResourceDialog;
