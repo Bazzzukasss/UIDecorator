@@ -17,7 +17,6 @@ UIRoutiner::~UIRoutiner()
 UIRoutiner::UIRoutiner(QObject *parent)
     : QObject(parent)
 {
-    initialize();
 }
 
 void UIRoutiner::initialize()
@@ -26,9 +25,20 @@ void UIRoutiner::initialize()
     loadSettings();
 }
 
+QString UIRoutiner::getCurrentStyle() const
+{
+    return mCurrentStyle;
+}
+
+QString UIRoutiner::getCurrentUITemplate() const
+{
+    return mCurrentUItemplate;
+}
+
 void UIRoutiner::selectStyle(const QString &aFilename)
 {
-    mCurrentStyle = aFilename;
+    if(!aFilename.isEmpty())
+        mCurrentStyle = aFilename;
     emit signalStylesListChanged(mStyles,mCurrentStyle);
 }
 
@@ -36,14 +46,14 @@ void UIRoutiner::addStyle(const QString &aFilename)
 {
     if(!mStyles.contains(aFilename))
         mStyles.append(aFilename);
+    mCurrentStyle = aFilename;
     emit signalStylesListChanged(mStyles,mCurrentStyle);
 }
 
 void UIRoutiner::newStyle(const QString &aFilename,const QString& aContent)
 {
-    mCurrentStyle = aFilename;
-    saveStyle(aContent);
     addStyle(aFilename);
+    saveStyle(aContent);
 }
 
 void UIRoutiner::saveStyle(const QString& aContent)
@@ -65,12 +75,15 @@ void UIRoutiner::deleteStyle()
     mStyles.removeOne(mCurrentStyle);
     if( mStyles.size() > 0 )
         mCurrentStyle = mStyles[0];
+    else
+        mCurrentStyle = "";
     emit signalStylesListChanged(mStyles,mCurrentStyle);
 }
 
 void UIRoutiner::selectUITemplate(const QString &aFilename)
 {
-    mCurrentUItemplate = aFilename;
+    if(!aFilename.isEmpty())
+        mCurrentUItemplate = aFilename;
     emit signalUITemplatesListChanged(mUITemplates,mCurrentUItemplate);
 }
 

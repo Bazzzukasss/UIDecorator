@@ -9,6 +9,7 @@ class ResourceDialog;
 class QTextCharFormat;
 class QSettings;
 class GradientDialog;
+class QComboBox;
 
 namespace Ui {
 class UIDecorator;
@@ -30,27 +31,21 @@ private:
     QStringList mStyles;
     QStringList mUITemplates;
     QStringList mResources;
-    QString mCurrentUItemplate;
-    QString mCurrentStyle;
     QWidget* mpCurrentWidget{nullptr};
     QVBoxLayout* mpLayout{nullptr};
-    QString mCurrentStyleName;
-    QSettings* mpSettings;
     ResourceDialog* mpResourceDialog;
     GradientDialog* mpGradientDialog;
 
-    void refreshStylesList(const QString& aFoldername = STYLE_FOLDER);
-    void refreshUITemplatesList();
+    void selectUITemplateFile(const QString&);
+    void openUITemplateFile();
 
-    void selectUITemplateFile(const QString& aFilename);
-    void addUITemplateFile();
-
-    void loadStyle(const QString& aFilename);
     void newStyle();
-    void saveStyle(const QString& aFilename);
-    void deleteStyle(const QString& aFilename);
+    void openStyle();
+    void saveStyle();
+    void deleteStyle();
     void applyStyle();
-    void selectStyle(const QString& aFilename);
+    QString checkStyle(const QString&);
+    void selectStyle(const QString&);
 
     void insertGradient(const QString& aProperty = "image");
     void insertResource(const QString& aProperty = "image");
@@ -58,10 +53,13 @@ private:
     void insertFont();
 
     void initialize();
-    void loadSettings();
-    void saveSettings();
     void initializeDictionaries();
-    void initializeDictionaries(const QString& aFilename, const QString aIcon, const QTextCharFormat& aFormat);
+    void initializeDictionaries(const QString&, const QString, const QTextCharFormat&);
+
+
+    void showStyles(const QStringList&,const QString&);
+    void showUITemplates(const QStringList&, const QString &);
+    void showFiles(QComboBox*, const QStringList&, const QString &);
 };
 
 #endif // UIDECORATOR_H

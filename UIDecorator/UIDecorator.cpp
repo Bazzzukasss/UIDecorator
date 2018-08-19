@@ -15,6 +15,7 @@
 #include <QMenu>
 #include "ResourceDialog.h"
 #include "GradientDialog.h"
+#include "UIRoutiner.h"
 
 #define STYLES_FOLDER "Styles"
 
@@ -28,16 +29,11 @@ UIDecorator::UIDecorator(QWidget *parent) :
 
 UIDecorator::~UIDecorator()
 {
-    saveSettings();
     delete ui;
 }
 
 void UIDecorator::initialize()
 {
-    if( !QDir(STYLES_FOLDER).exists() )
-        QDir().mkdir(STYLES_FOLDER);
-
-    mpSettings = new QSettings("config.ini",QSettings::IniFormat,this);
     mpLayout = new QVBoxLayout(ui->mUIFrame);
     mpLayout->setMargin(0);
     mpResourceDialog = new ResourceDialog(this);
@@ -45,16 +41,23 @@ void UIDecorator::initialize()
 
     ui->mUITemplateFrame1->setAutoFillBackground(true);
     ui->mUITemplateFrame2->setAutoFillBackground(true);
+    ui->mComboBoxUITemplates->view()->setTextElideMode(Qt::ElideLeft);
+    ui->mComboBoxStyles->view()->setTextElideMode(Qt::ElideLeft);
 
-    connect(ui->mComboBoxUITemplates,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ selectUITemplateFile(aFilename); });
-    connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,     this,[&](const QString& aFilename){ selectStyle(aFilename); });
+    connect(ui->mComboBoxUITemplates,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ pROUTINER->selectUITemplate(aFilename); });
+    connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,     this,[&](const QString& aFilename){ pROUTINER->selectStyle(checkStyle(aFilename)); });
+
     connect(ui->mButtonNew,&QPushButton::clicked,                   this,[&](){ newStyle(); });
-    connect(ui->mButtonDelete,&QPushButton::clicked,                this,[&](){ deleteStyle(ui->mComboBoxStyles->currentText()); });
-    connect(ui->mButtonSave,&QPushButton::clicked,                  this,[&](){ saveStyle(ui->mComboBoxStyles->currentText()); });
+    connect(ui->mButtonOpenStyle,&QPushButton::clicked,             this,[&](){ openStyle(); });
+    connect(ui->mButtonDelete,&QPushButton::clicked,                this,[&](){ deleteStyle(); });
+    connect(ui->mButtonSave,&QPushButton::clicked,                  this,[&](){ saveStyle(); });
     connect(ui->mButtonClipboard,&QPushButton::clicked,             this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
     connect(ui->mTextEdit,&QTextEdit::textChanged,                  this,[&](){ applyStyle(); });
-    connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ addUITemplateFile(); });
+    connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ openUITemplateFile(); });
     connect(ui->mButtonFont,&QPushButton::clicked,                  this,[&](){ insertFont(); });
+
+    connect(pROUTINER,&UIRoutiner::signalStylesListChanged,          this,[&](const QStringList& aFiles, const QString& aCurrentFile){ showStyles(aFiles,aCurrentFile); });
+    connect(pROUTINER,&UIRoutiner::signalUITemplatesListChanged,     this,[&](const QStringList& aFiles, const QString& aCurrentFile){ showUITemplates(aFiles,aCurrentFile); });
 
     //Color Menu
     QMenu* mColorSelectionMenu = new QMenu(this);
@@ -80,40 +83,9 @@ void UIDecorator::initialize()
     for(auto& property : colorProperties)
         mGradientSelectionMenu->addAction(property,[=](){insertGradient(property);});
 
-    loadSettings();
     initializeDictionaries();
 
-    refreshUITemplatesList();
-    refreshStylesList();
-
-    selectStyle(ui->mComboBoxStyles->currentText());
-    selectUITemplateFile(ui->mComboBoxUITemplates->currentText());
-}
-
-void UIDecorator::saveSettings()
-{
-    mpSettings->beginGroup("UITemplates");
-    mpSettings->beginWriteArray("files");
-    int  i(0);
-    for(auto& name : mUITemplates){
-        mpSettings->setArrayIndex(i++);
-        mpSettings->setValue("files",name);
-    }
-    mpSettings->endArray();
-    mpSettings->endGroup();
-}
-
-void UIDecorator::loadSettings()
-{
-    mUITemplates.clear();
-    mpSettings->beginGroup("UITemplates");
-    int size = mpSettings->beginReadArray("files");
-    for(int i = 0; i < size; i++){
-        mpSettings->setArrayIndex(i);
-        mUITemplates.append( mpSettings->value("files").toString());
-    }
-    mpSettings->endArray();
-    mpSettings->endGroup();
+    pROUTINER->initialize();
 }
 
 void UIDecorator::initializeDictionaries()
@@ -148,26 +120,35 @@ void UIDecorator::initializeDictionaries(const QString& aFilename, const QString
     ui->mTextEdit->addHighlightionRule(aFilename,aFormat);
 }
 
-void UIDecorator::refreshStylesList(const QString &aFoldername)
+void UIDecorator::showStyles( const QStringList& aFiles, const QString& aCurrentFile )
 {
-    auto files = QDir(aFoldername).entryList(QStringList() << "*.css",QDir::Files);
-    ui->mComboBoxStyles->blockSignals(true);
-    ui->mComboBoxStyles->clear();
-    ui->mComboBoxStyles->addItems(files);
-    ui->mComboBoxStyles->blockSignals(false);
+    static QString prevFile;
+    showFiles(ui->mComboBoxStyles,aFiles,aCurrentFile);
+    if(prevFile != aCurrentFile)
+    {
+        prevFile = aCurrentFile;
+        selectStyle(aCurrentFile);
+    }
 }
 
-void UIDecorator::refreshUITemplatesList()
+void UIDecorator::showUITemplates( const QStringList& aFiles, const QString& aCurrentFile )
 {
-    ui->mComboBoxUITemplates->blockSignals(true);
-    ui->mComboBoxUITemplates->clear();
-    for(auto& filename : mUITemplates)
+    static QString prevFile;
+    showFiles(ui->mComboBoxUITemplates,aFiles,aCurrentFile);
+    if(prevFile != aCurrentFile)
     {
-        QFileInfo f(filename);
-        if(f.exists())
-            ui->mComboBoxUITemplates->addItem(filename);
+        prevFile = aCurrentFile;
+        selectUITemplateFile(aCurrentFile);
     }
-    ui->mComboBoxUITemplates->blockSignals(false);
+}
+
+void UIDecorator::showFiles(QComboBox* aComboBox, const QStringList& aFiles, const QString& aCurrentFile)
+{
+    aComboBox->blockSignals(true);
+    aComboBox->clear();
+    aComboBox->addItems(aFiles);
+    aComboBox->setCurrentText(aCurrentFile);
+    aComboBox->blockSignals(false);
 }
 
 void UIDecorator::selectUITemplateFile(const QString &aFilename)
@@ -188,75 +169,41 @@ void UIDecorator::selectUITemplateFile(const QString &aFilename)
     }
 }
 
-void UIDecorator::addUITemplateFile()
+void UIDecorator::openUITemplateFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open UI template"), "", tr("UI Files (*.ui)"));
 
-    if(fileName.isEmpty())
-        return;
-
-    if(!mUITemplates.contains(fileName))
-    {
-        mUITemplates.append(fileName);
-        refreshUITemplatesList();
-    }
-    ui->mComboBoxUITemplates->blockSignals(true);
-    ui->mComboBoxUITemplates->setCurrentText(fileName);
-    ui->mComboBoxUITemplates->blockSignals(false);
-    selectUITemplateFile(fileName);
-}
-
-void UIDecorator::loadStyle(const QString &aFilename)
-{
-    QFile file("Styles/"+aFilename);
-    file.open(QFile::ReadOnly);
-    if(file.isOpen())
-    {
-        QTextStream in(&file);
-        ui->mTextEdit->setText(in.readAll());
-        applyStyle();
-        file.close();
-    }
+    if(!fileName.isEmpty())
+        pROUTINER->addUITemplate(fileName);
 }
 
 void UIDecorator::newStyle()
 {
-    bool ok;
-    QString fileName = QInputDialog::getText(this, tr("New Style"),
-                                             tr("Style name:"), QLineEdit::Normal,
-                                             "StyleNew", &ok);
+    QString fileName = QFileDialog::getSaveFileName(this, tr("New CSS Style"), "", tr("CSS Files (*.css)"));
+
     if (!fileName.isEmpty())
-    {
-        saveStyle(fileName + ".css");        
-        refreshStylesList();
-        ui->mComboBoxStyles->blockSignals(true);
-        ui->mComboBoxStyles->setCurrentText(fileName + ".css");
-        ui->mComboBoxStyles->blockSignals(false);
-    }
+        pROUTINER->newStyle(fileName, ui->mTextEdit->toPlainText());
 }
 
-void UIDecorator::saveStyle(const QString& aFilename)
+void UIDecorator::openStyle()
 {
-    QFile file(QString("%1/%2").arg(STYLES_FOLDER).arg(aFilename));
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open CSS Style"), "", tr("CSS Files (*.css)"));
 
-    if (file.open(QIODevice::WriteOnly))
-    {
-        QTextStream stream(&file);
-        stream << ui->mTextEdit->toPlainText();
-        file.close();
-        ui->mTextEdit->setTextChangedState(false);
-    }
+    for(auto fileName : files)
+        pROUTINER->addStyle(fileName);
 }
 
-void UIDecorator::deleteStyle(const QString &aFilename)
+void UIDecorator::saveStyle()
 {
-    QFile file("Styles/"+aFilename);
-    auto res = QMessageBox::question(this, "UIDecorator", tr("Delete style: %1").arg(aFilename), QMessageBox::Yes|QMessageBox::No);
+    pROUTINER->saveStyle(ui->mTextEdit->toPlainText());
+    ui->mTextEdit->setTextChangedState(false);
+}
+
+void UIDecorator::deleteStyle()
+{
+    auto res = QMessageBox::question(this, "UIDecorator", tr("Delete style: %1").arg(pROUTINER->getCurrentStyle()), QMessageBox::Yes|QMessageBox::No);
     if(res == QMessageBox::Yes)
-        file.remove();
-    refreshStylesList();
-    mCurrentStyleName = ui->mComboBoxStyles->currentText();
-    loadStyle(mCurrentStyleName);
+        pROUTINER->deleteStyle();
 }
 
 void UIDecorator::applyStyle()
@@ -265,7 +212,7 @@ void UIDecorator::applyStyle()
         mpCurrentWidget->setStyleSheet( ui->mTextEdit->toPlainText() );
 }
 
-void UIDecorator::selectStyle(const QString& aFilename)
+QString UIDecorator::checkStyle(const QString& aFilename)
 {
     if(ui->mTextEdit->isTextChanged())
     {
@@ -273,7 +220,7 @@ void UIDecorator::selectStyle(const QString& aFilename)
 
         if(res == QMessageBox::Yes)
         {
-            saveStyle(mCurrentStyleName);
+            saveStyle();
             ui->mTextEdit->setTextChangedState(false);
         }
 
@@ -281,16 +228,23 @@ void UIDecorator::selectStyle(const QString& aFilename)
             ui->mTextEdit->setTextChangedState(false);
 
         if(res == QMessageBox::Cancel)
-        {
-            ui->mComboBoxStyles->blockSignals(true);
-            ui->mComboBoxStyles->setCurrentText(mCurrentStyleName);
-            ui->mComboBoxStyles->blockSignals(false);
-            return;
-        }
+            return "";
     }
 
-    loadStyle(aFilename);
-    mCurrentStyleName = aFilename;
+    return aFilename;
+}
+
+void UIDecorator::selectStyle(const QString& aFilename)
+{
+    QFile file(aFilename);
+    file.open(QFile::ReadOnly);
+    if(file.isOpen())
+    {
+        QTextStream in(&file);
+        ui->mTextEdit->setText(in.readAll());
+        applyStyle();
+        file.close();
+    }
 }
 
 void UIDecorator::insertGradient(const QString &aProperty)

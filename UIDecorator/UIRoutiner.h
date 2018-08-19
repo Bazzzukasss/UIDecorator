@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#define RUTINER UIRoutiner::getInstace()
+#define pROUTINER UIRoutiner::getInstace()
 
 class QSettings;
 
@@ -24,6 +24,11 @@ public:
     void selectUITemplate(const QString& aFilename);
     void addUITemplate(const QString& aFilename);
 
+    void initialize();
+
+    QString getCurrentStyle() const;
+    QString getCurrentUITemplate() const;
+
 signals:
     void signalStylesListChanged(const QStringList&,const QString&);
     void signalUITemplatesListChanged(const QStringList&,const QString&);
@@ -38,7 +43,7 @@ private:
 
     void loadSettings();
     void saveSettings();
-    void initialize();
+
 
     explicit UIRoutiner(QObject *parent = nullptr);
     UIRoutiner(const UIRoutiner&);
