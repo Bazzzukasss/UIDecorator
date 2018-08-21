@@ -44,7 +44,7 @@ private:
     void saveStyle();
     void deleteStyle();
     void applyStyle();
-    QString checkStyle(const QString&);
+    bool checkStyle();
     void selectStyle(const QString&);
 
     void insertGradient(const QString& aProperty = "image");

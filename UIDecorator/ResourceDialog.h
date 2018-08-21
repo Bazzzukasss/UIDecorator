@@ -28,11 +28,9 @@ private:
     Ui::ResourceDialog *ui;
 
     void initialize();
-    void loadSettings();
-    void saveSettings();
-    void addRecourceFile();
+    void openResourceFile();
     void selectResourceFile(const QString& aFilename);
-    void refreshResourcesList();
+    void showResources( const QStringList& aFiles, const QString& aCurrentFile );
 
 };
 

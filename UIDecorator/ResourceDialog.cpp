@@ -4,6 +4,7 @@
 #include <QSettings>
 #include "Treeitem.h"
 #include "XMLProcessor.h"
+#include "UIRoutiner.h"
 
 ResourceDialog::ResourceDialog(QWidget *parent)
     : QDialog(parent),
@@ -15,7 +16,6 @@ ResourceDialog::ResourceDialog(QWidget *parent)
 
 ResourceDialog::~ResourceDialog()
 {
-    saveSettings();
     delete mTreeItem;
     delete ui;
 }
@@ -32,74 +32,38 @@ void ResourceDialog::initialize()
 {
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
-    mpSettings = new QSettings("config.ini",QSettings::IniFormat,this);
+    connect(ui->mComboBoxResources,&QComboBox::currentTextChanged, this,[&](const QString& aFilename){ pROUTINER->selectResource(aFilename); });
+    connect(ui->mButtonOk,&QPushButton::clicked,                        [&](){ mResult = mResource;close(); });
+    connect(ui->mButtonCancel,&QPushButton::clicked,                    [&](){ close(); });
+    connect(ui->mButtonOpen, &QPushButton::clicked, this,               [&](){ openResourceFile(); });
 
+    connect(pROUTINER,&UIRoutiner::signalResourcesListChanged, this,    [&](const QStringList& aFiles, const QString& aCurrentFile){ showResources(aFiles,aCurrentFile); });
 
-    connect(ui->mButtonOk,&QPushButton::clicked,                                                        [&](){ mResult = mResource;close(); });
-    connect(ui->mButtonCancel,&QPushButton::clicked,                                                    [&](){ close(); });
-    connect(ui->mButtonOpen, &QPushButton::clicked, this, [&](){ addRecourceFile(); });
-    connect(ui->mComboBoxResources,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ selectResourceFile(aFilename); });
-
-    loadSettings();
-    refreshResourcesList();
-    selectResourceFile(ui->mComboBoxResources->currentText());
 }
 
-void ResourceDialog::loadSettings()
+void ResourceDialog::showResources( const QStringList& aFiles, const QString& aCurrentFile )
 {
-    mResources.clear();
-    mpSettings->beginGroup("Resources");
-    int size = mpSettings->beginReadArray("files");
-    for(int i = 0; i < size; i++){
-        mpSettings->setArrayIndex(i);
-        mResources.append( mpSettings->value("files").toString());
-    }
-    mpSettings->endArray();
-    mpSettings->endGroup();
-}
+    static QString prevFile;
 
-void ResourceDialog::saveSettings()
-{
-    mpSettings->beginGroup("Resources");
-    mpSettings->beginWriteArray("files");
-    int  i(0);
-    for(auto& name : mResources){
-        mpSettings->setArrayIndex(i++);
-        mpSettings->setValue("files",name);
-    }
-    mpSettings->endArray();
-    mpSettings->endGroup();
-}
-
-void ResourceDialog::refreshResourcesList()
-{
     ui->mComboBoxResources->blockSignals(true);
     ui->mComboBoxResources->clear();
-    for(auto& filename : mResources)
-    {
-        QFileInfo f(filename);
-        if(f.exists())
-            ui->mComboBoxResources->addItem(filename);
-    }
+    ui->mComboBoxResources->addItems(aFiles);
+    ui->mComboBoxResources->setCurrentText(aCurrentFile);
     ui->mComboBoxResources->blockSignals(false);
+
+    if(prevFile != aCurrentFile)
+    {
+        prevFile = aCurrentFile;
+        selectResourceFile(aCurrentFile);
+    }
 }
 
-void ResourceDialog::addRecourceFile()
+void ResourceDialog::openResourceFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open Resource"), "", tr("Resource Files (*.qrc)"));
 
-    if(fileName.isEmpty())
-        return;
-
-    if(!mResources.contains(fileName))
-    {
-        mResources.append(fileName);
-        refreshResourcesList();
-    }
-    ui->mComboBoxResources->blockSignals(true);
-    ui->mComboBoxResources->setCurrentText(fileName);
-    ui->mComboBoxResources->blockSignals(false);
-    selectResourceFile(fileName);
+    if(!fileName.isEmpty())
+        pROUTINER->addRecource(fileName);
 }
 
 void ResourceDialog::selectResourceFile(const QString &aFilename)

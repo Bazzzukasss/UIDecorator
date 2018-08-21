@@ -24,14 +24,19 @@ public:
     void selectUITemplate(const QString& aFilename);
     void addUITemplate(const QString& aFilename);
 
+    void selectResource(const QString& aFilename);
+    void addRecource(const QString& aFilename);
+
     void initialize();
 
     QString getCurrentStyle() const;
     QString getCurrentUITemplate() const;
+    QString getCurrentResource() const;
 
 signals:
     void signalStylesListChanged(const QStringList&,const QString&);
     void signalUITemplatesListChanged(const QStringList&,const QString&);
+    void signalResourcesListChanged(const QStringList&,const QString&);
 
 private:
     QStringList mStyles;
@@ -39,11 +44,11 @@ private:
     QStringList mResources;
     QString mCurrentUItemplate;
     QString mCurrentStyle;
+    QString mCurrentResource;
     QSettings* mpSettings;
 
     void loadSettings();
     void saveSettings();
-
 
     explicit UIRoutiner(QObject *parent = nullptr);
     UIRoutiner(const UIRoutiner&);

@@ -35,6 +35,11 @@ QString UIRoutiner::getCurrentUITemplate() const
     return mCurrentUItemplate;
 }
 
+QString UIRoutiner::getCurrentResource() const
+{
+    return mCurrentResource;
+}
+
 void UIRoutiner::selectStyle(const QString &aFilename)
 {
     if(!aFilename.isEmpty())
@@ -91,7 +96,21 @@ void UIRoutiner::addUITemplate(const QString &aFilename)
 {
     if(!mUITemplates.contains(aFilename))
         mUITemplates.append(aFilename);
-   emit signalUITemplatesListChanged(mUITemplates,mCurrentUItemplate);
+    emit signalUITemplatesListChanged(mUITemplates,mCurrentUItemplate);
+}
+
+void UIRoutiner::addRecource(const QString &aFilename)
+{
+    if(!mResources.contains(aFilename))
+        mResources.append(aFilename);
+    emit signalResourcesListChanged(mResources,mCurrentResource);
+}
+
+void UIRoutiner::selectResource(const QString &aFilename)
+{
+    if(!aFilename.isEmpty())
+        mCurrentResource = aFilename;
+    emit signalResourcesListChanged(mResources,mCurrentResource);
 }
 
 void UIRoutiner::saveSettings()
@@ -112,6 +131,17 @@ void UIRoutiner::saveSettings()
     mpSettings->beginGroup("Styles");
     mpSettings->beginWriteArray("files");
     for(auto& name : mStyles){
+        mpSettings->setArrayIndex(i++);
+        mpSettings->setValue("files",name);
+    }
+    mpSettings->endArray();
+    mpSettings->endGroup();
+
+    //Resources
+    mpSettings->beginGroup("Resources");
+    mpSettings->beginWriteArray("files");
+    i = 0;
+    for(auto& name : mResources){
         mpSettings->setArrayIndex(i++);
         mpSettings->setValue("files",name);
     }
@@ -150,4 +180,16 @@ void UIRoutiner::loadSettings()
     if( mStyles.size() > 0 )
         mCurrentStyle = mStyles[0];
     emit signalStylesListChanged(mStyles,mCurrentStyle);
+
+    //Resources
+    mResources.clear();
+    mpSettings->beginGroup("Resources");
+    size = mpSettings->beginReadArray("files");
+    for(int i = 0; i < size; i++){
+        mpSettings->setArrayIndex(i);
+        mResources.append( mpSettings->value("files").toString());
+    }
+    mpSettings->endArray();
+    mpSettings->endGroup();
+    emit signalResourcesListChanged(mResources,mCurrentResource);
 }

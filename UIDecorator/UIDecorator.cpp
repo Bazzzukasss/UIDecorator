@@ -45,14 +45,18 @@ void UIDecorator::initialize()
     ui->mComboBoxStyles->view()->setTextElideMode(Qt::ElideLeft);
 
     connect(ui->mComboBoxUITemplates,&QComboBox::currentTextChanged,this,[&](const QString& aFilename){ pROUTINER->selectUITemplate(aFilename); });
-    connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,     this,[&](const QString& aFilename){ pROUTINER->selectStyle(checkStyle(aFilename)); });
+    connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,     this,[&](const QString& aFilename){
+                                                                                                            QString name = checkStyle() ? aFilename : "";
+                                                                                                            pROUTINER->selectStyle(name);
+
+                                                                                                        });
 
     connect(ui->mButtonNew,&QPushButton::clicked,                   this,[&](){ newStyle(); });
     connect(ui->mButtonOpenStyle,&QPushButton::clicked,             this,[&](){ openStyle(); });
     connect(ui->mButtonDelete,&QPushButton::clicked,                this,[&](){ deleteStyle(); });
     connect(ui->mButtonSave,&QPushButton::clicked,                  this,[&](){ saveStyle(); });
     connect(ui->mButtonClipboard,&QPushButton::clicked,             this,[&](){ QApplication::clipboard()->setText(ui->mTextEdit->toPlainText()); });
-    connect(ui->mTextEdit,&QTextEdit::textChanged,                  this,[&](){ applyStyle(); });
+    connect(ui->mTextEdit,&QTextEdit::textChanged,                  this,[&](){ applyStyle(); ui->mTextEdit->setTextChangedState(true); });
     connect(ui->mButtonOpenUI,&QPushButton::clicked,                this,[&](){ openUITemplateFile(); });
     connect(ui->mButtonFont,&QPushButton::clicked,                  this,[&](){ insertFont(); });
 
@@ -128,6 +132,7 @@ void UIDecorator::showStyles( const QStringList& aFiles, const QString& aCurrent
     {
         prevFile = aCurrentFile;
         selectStyle(aCurrentFile);
+        ui->mTextEdit->setTextChangedState(false);
     }
 }
 
@@ -179,6 +184,9 @@ void UIDecorator::openUITemplateFile()
 
 void UIDecorator::newStyle()
 {
+    if( !checkStyle() )
+        return;
+
     QString fileName = QFileDialog::getSaveFileName(this, tr("New CSS Style"), "", tr("CSS Files (*.css)"));
 
     if (!fileName.isEmpty())
@@ -187,6 +195,9 @@ void UIDecorator::newStyle()
 
 void UIDecorator::openStyle()
 {
+    if( !checkStyle() )
+        return;
+
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Open CSS Style"), "", tr("CSS Files (*.css)"));
 
     for(auto fileName : files)
@@ -212,26 +223,25 @@ void UIDecorator::applyStyle()
         mpCurrentWidget->setStyleSheet( ui->mTextEdit->toPlainText() );
 }
 
-QString UIDecorator::checkStyle(const QString& aFilename)
+bool UIDecorator::checkStyle()
 {
     if(ui->mTextEdit->isTextChanged())
     {
-        auto res = QMessageBox::question(this, "UIDecorator", tr("The style %1 has been changed.Do you want to save changes?").arg(aFilename), QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+        auto res = QMessageBox::question(this, "UIDecorator", tr("The style %1 has been changed.Do you want to save changes?").arg(pROUTINER->getCurrentStyle()), QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
 
         if(res == QMessageBox::Yes)
         {
             saveStyle();
-            ui->mTextEdit->setTextChangedState(false);
+            return true;
         }
 
         if(res == QMessageBox::No)
-            ui->mTextEdit->setTextChangedState(false);
+            return true;
 
-        if(res == QMessageBox::Cancel)
-            return "";
+        return false;
     }
 
-    return aFilename;
+    return true;
 }
 
 void UIDecorator::selectStyle(const QString& aFilename)
