@@ -99,7 +99,7 @@ QString QTextEditExt::textUnderCursor()
         qDebug()<<"left:"<<mWordStartPosition<<mCurrentWord;
     }
 
-    qDebug()<<"//add symbols from rigth side of cursor";
+    qDebug()<<"add symbols from rigth side of cursor";
     if( position < text.length() )
     {
         qDebug()<<".";
