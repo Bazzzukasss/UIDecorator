@@ -5,7 +5,6 @@
 #include <QStringList>
 #include <QVBoxLayout>
 
-class ResourceDialog;
 class QTextCharFormat;
 class QSettings;
 class GradientDialog;
@@ -30,10 +29,8 @@ private:
     Ui::UIDecorator *ui;
     QStringList mStyles;
     QStringList mUITemplates;
-    QStringList mResources;
     QWidget* mpCurrentWidget{nullptr};
     QVBoxLayout* mpLayout{nullptr};
-    ResourceDialog* mpResourceDialog;
     GradientDialog* mpGradientDialog;
 
     void selectUITemplateFile(const QString&);

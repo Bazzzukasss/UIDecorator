@@ -13,7 +13,6 @@
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QMenu>
-#include "ResourceDialog.h"
 #include "GradientDialog.h"
 #include "UIRoutiner.h"
 
@@ -36,7 +35,6 @@ void UIDecorator::initialize()
 {
     mpLayout = new QVBoxLayout(ui->mUIFrame);
     mpLayout->setMargin(0);
-    mpResourceDialog = new ResourceDialog(this);
     mpGradientDialog = new GradientDialog(this);
 
     ui->mUITemplateFrame1->setAutoFillBackground(true);
@@ -48,7 +46,6 @@ void UIDecorator::initialize()
     connect(ui->mComboBoxStyles,&QComboBox::currentTextChanged,     this,[&](const QString& aFilename){
                                                                                                             QString name = checkStyle() ? aFilename : "";
                                                                                                             pROUTINER->selectStyle(name);
-
                                                                                                         });
 
     connect(ui->mButtonNew,&QPushButton::clicked,                   this,[&](){ newStyle(); });
@@ -266,9 +263,9 @@ void UIDecorator::insertGradient(const QString &aProperty)
 
 void UIDecorator::insertResource(const QString &aProperty)
 {
-    QString resource = mpResourceDialog->getResource();
+    QString resource = QFileDialog::getOpenFileName(this, tr("Open Image Style"), "", tr("Image Files (*.jpg *.png *.bmp *.svg)"));
     if(!resource.isEmpty())
-        ui->mTextEdit->insertLine( aProperty + " : " + resource + ";");
+        ui->mTextEdit->insertLine( aProperty + " :url(" + resource + ");");
 }
 
 void UIDecorator::insertColor(const QString& aProperty)

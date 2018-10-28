@@ -30,10 +30,7 @@ SOURCES += \
     QTextEditExt.cpp \
     QSyntaxHighlighterExt.cpp \
     QCompleterExt.cpp \
-    ResourceDialog.cpp \
     GradientDialog.cpp \
-    Treeitem.cpp \
-    XMLProcessor.cpp \
     UIRoutiner.cpp
 
 HEADERS += \
@@ -42,19 +39,12 @@ HEADERS += \
     QTextEditExt.h \
     QSyntaxHighlighterExt.h \
     QCompleterExt.h \
-    ResourceDialog.h \
     GradientDialog.h \
-    Treeitem.h \
-    XMLData.h \
-    XMLProcessor.h \
     UIRoutiner.h
 
 FORMS += \
         mainwindow.ui \
     UIDecorator.ui \
-    containers.ui \
-    widgets.ui \
-    ResourceDialog.ui \
     GradientDialog.ui
 
 RESOURCES += \
