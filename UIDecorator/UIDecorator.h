@@ -45,6 +45,7 @@ private:
     void selectStyle(const QString&);
 
     void insertGradient(const QString& aProperty = "image");
+    void insertPreset(const QString& aFilename = "");
     void insertResource(const QString& aProperty = "image");
     void insertColor(const QString &aProperty = "color");
     void insertFont();

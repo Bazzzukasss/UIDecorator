@@ -65,9 +65,10 @@ QString QTextEditExt::textUnderCursor()
     int position = cursor.position();
     mWordStartPosition = mWordEndPosition = position;
 
-    //add symbols from left side of cursor
+    qDebug()<<"add symbols from left side of cursor";
     if(position > 0)
     {
+        qDebug()<<".";
         int p = position-1;
         bool isDoubleDots(false);
         do
@@ -98,9 +99,10 @@ QString QTextEditExt::textUnderCursor()
         qDebug()<<"left:"<<mWordStartPosition<<mCurrentWord;
     }
 
-    //add symbols from rigth side of cursor
+    qDebug()<<"//add symbols from rigth side of cursor";
     if( position < text.length() )
     {
+        qDebug()<<".";
         int p = position;
         do
         {

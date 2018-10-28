@@ -65,24 +65,28 @@ void UIDecorator::initialize()
     ui->mButtonColor->setMenu(mColorSelectionMenu);
     QStringList colorProperties{"color","background-color","alternate-background-color","border-color","border-top-color","border-right-color",
                                "border-bottom-color","border-left-color","gridline-color","selection-color","selection-background-color"};
-
     for(auto& property : colorProperties)
         mColorSelectionMenu->addAction(property,[=](){insertColor(property);});
 
     //Resource Menu
     QMenu* mResourceSelectionMenu = new QMenu(this);
     ui->mButtonResource->setMenu(mResourceSelectionMenu);
-    QStringList resourceProperties{"image","background-image","border-image"};
-
+    QStringList resourceProperties{"image","background-image","border-image"};    
     for(auto& property : resourceProperties)
         mResourceSelectionMenu->addAction(property,[=](){insertResource(property);});
 
     //Gradient Menu
     QMenu* mGradientSelectionMenu = new QMenu(this);
     ui->mButtonGradient->setMenu(mGradientSelectionMenu);
-
     for(auto& property : colorProperties)
         mGradientSelectionMenu->addAction(property,[=](){insertGradient(property);});
+
+    //Presets
+    QStringList presets = QDir("Presets").entryList(QStringList() << "*.css",QDir::Files);
+    QMenu* mPresetSelectionMenu = new QMenu(this);
+    ui->mButtonPreset->setMenu(mPresetSelectionMenu);
+    for(auto& filename : presets)
+        mPresetSelectionMenu->addAction(QFileInfo(filename).fileName(),[=](){insertPreset( "Presets/" + filename ); });
 
     initializeDictionaries();
 
@@ -259,6 +263,19 @@ void UIDecorator::insertGradient(const QString &aProperty)
     QString gradient =  mpGradientDialog->getGradient();
     if(!gradient.isEmpty())
         ui->mTextEdit->insertLine( aProperty + " : " + gradient + ";");
+}
+
+void UIDecorator::insertPreset(const QString &aFilename)
+{
+    QFile file(aFilename);
+    file.open(QFile::ReadOnly);
+    if(file.isOpen())
+    {
+        QTextStream in(&file);
+        ui->mTextEdit->insertPlainText(in.readAll());
+        applyStyle();
+        file.close();
+    }
 }
 
 void UIDecorator::insertResource(const QString &aProperty)
