@@ -272,6 +272,8 @@ void UIDecorator::insertPreset(const QString &aFilename)
     if(file.isOpen())
     {
         QTextStream in(&file);
+        if(ui->mTextEdit->toPlainText().length()>0)
+            ui->mTextEdit->insertLine("");
         ui->mTextEdit->insertPlainText(in.readAll());
         applyStyle();
         file.close();
